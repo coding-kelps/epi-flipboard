@@ -1,0 +1,8 @@
+# Ignore commitizen configuration
+.cz.toml
+
+# Ignore direnv
+.envrc
+
+# Ignore local VS Code settings
+.vscode/
