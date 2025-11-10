@@ -1,0 +1,19 @@
+[package]
+name = "epi-flipboard"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.8.6"
+tokio = { version = "1.48.0", features = ["full"] }
+askama = "0.14.0"
+tower-http = { version = "0.6.6", features = ["full"] }
+tracing = "0.1.41"
+tracing-subscriber = "0.3.20"
+async-std = { version = "1", features = ["attributes", "tokio1"] }
+sea-orm = { version = "1.1.16", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros", "with-uuid", "debug-print"] }
+dotenvy = "0.15.7"
+thiserror = "2.0.17"
+displaydoc = "0.2.5"
+pretty-error-debug-derive = "0.3.1"
+pretty-error-debug = "0.3.2"
