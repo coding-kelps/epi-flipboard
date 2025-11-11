@@ -31,10 +31,6 @@ async fn main() -> Result<(), Error> {
 }
 
 async fn run_server() -> Result<(), Error> {
-    tracing_subscriber::fmt()
-        .with_max_level(Level::DEBUG)
-        .with_test_writer()
-        .init();
     let addr = "0.0.0.0";
     let port = 4444;
 
