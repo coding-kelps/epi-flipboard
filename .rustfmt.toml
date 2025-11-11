@@ -1,0 +1,46 @@
+# General
+indent_style = "Block"
+unstable_features = true
+max_width = 80
+use_small_heuristics = "Max"
+color = "Always"
+format_strings = true
+space_after_colon = true
+
+# structs
+struct_field_align_threshold = 30
+struct_lit_single_line = true
+use_field_init_shorthand = true
+
+
+# Functions
+fn_params_layout = "Compressed"
+fn_call_width = 80
+brace_style = "PreferSameLine"
+empty_item_single_line = true
+
+# imports
+imports_granularity = "Crate"
+imports_layout = "Vertical"
+group_imports = "StdExternalCrate"
+reorder_imports = true
+
+# mods
+reorder_modules = true
+
+# tabs
+trailing_comma = "Vertical"
+match_block_trailing_comma = true
+hard_tabs = false
+tab_spaces = 4
+overflow_delimited_expr = true
+
+# comment
+comment_width = 80
+wrap_comments = true
+format_code_in_doc_comments = true
+normalize_comments = true
+
+# if
+single_line_if_else_max_width = 80
+single_line_let_else_max_width = 80

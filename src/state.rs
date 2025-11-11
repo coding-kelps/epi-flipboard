@@ -24,11 +24,18 @@ impl std::error::Error for StateError {}
 
 #[derive(Clone)]
 pub struct AppState {
-    // pub db: sea_orm::DatabaseConnection,
+    pub db: sea_orm::DatabaseConnection,
 }
 
 impl AppState {
     pub async fn new() -> Result<Self, StateError> {
-        Ok(AppState {})
+        Ok(AppState {
+            db: sea_orm::Database::connect(
+                std::env::var("DATABASE_URL")
+                    .map_err(|_| StateError::MissingState)?,
+            )
+            .await
+            .map_err(|_| StateError::InitState)?,
+        })
     }
 }

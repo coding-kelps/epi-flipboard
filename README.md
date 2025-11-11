@@ -1,6 +1,6 @@
 # EpiFlipBoard
 
-## Overview 
+## Overview
 
 a school project about cloning the [FlipBoard](https://flipboard.com/) aggregator platform.
 

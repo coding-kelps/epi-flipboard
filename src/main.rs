@@ -1,14 +1,16 @@
+pub mod cli;
 pub mod error;
 pub mod home;
 pub mod state;
 
-use axum::Router;
 use axum::response::Redirect;
 use axum::routing::get;
+use axum::Router;
+use dotenvy::dotenv;
 use tower_http::services::ServeDir;
 use tower_http::trace::TraceLayer;
-use tracing::Level;
 use tracing::event;
+use tracing::Level;
 
 use crate::error::AppError;
 use crate::error::Error;
@@ -17,6 +19,18 @@ use crate::state::AppState;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
+    dotenv().ok();
+
+    tracing_subscriber::fmt()
+        .with_max_level(Level::DEBUG)
+        .with_test_writer()
+        .init();
+
+    // Delegate to cli module to choose between server or migration commands.
+    cli::run().await
+}
+
+async fn run_server() -> Result<(), Error> {
     tracing_subscriber::fmt()
         .with_max_level(Level::DEBUG)
         .with_test_writer()
