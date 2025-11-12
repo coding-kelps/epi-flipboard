@@ -23,6 +23,8 @@ impl MigrationTrait for Migration {
                     .col(text(Article::Description).not_null())
                     .col(text(Article::Content).not_null())
                     .col(string(Article::OriginalUrl).not_null())
+                    .col(string(Article::Tag).not_null())
+                    .col(string(Article::ImageUrl).not_null())
                     .to_owned(),
             )
             .await
@@ -44,4 +46,6 @@ enum Article {
     Description,
     Content,
     OriginalUrl,
+    Tag,
+    ImageUrl,
 }

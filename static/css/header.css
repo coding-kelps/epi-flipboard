@@ -1,0 +1,134 @@
+/* Header - Override defaults and specific styling */
+header {
+  background: #1a1a1a;
+  padding: 1rem 0;
+}
+
+header > div {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+header > div > a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  text-decoration: none;
+  color: inherit;
+}
+
+header > div > a img {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+}
+
+header h1 {
+  color: white;
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.search-wrapper {
+  flex: 1;
+  max-width: 400px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+header input[type="text"] {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  background: #333;
+  color: white;
+  border-radius: 20px;
+  border: none;
+}
+
+header input[type="text"]::placeholder {
+  color: #999;
+}
+
+header input[type="text"]:focus {
+  background: #404040;
+  box-shadow: none;
+  outline: none;
+}
+
+.search-wrapper span {
+  position: absolute;
+  left: 0.75rem;
+  font-size: 1rem;
+  pointer-events: none;
+  color: #999;
+}
+
+header nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  white-space: nowrap;
+}
+
+header nav button {
+  background: transparent;
+  color: white;
+  padding: 0;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+header nav button:hover {
+  color: #e12c2c;
+  box-shadow: none;
+  background: transparent;
+}
+
+header nav .button-primary {
+  background: #e12c2c;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+header nav .button-primary:hover {
+  background: #c41e1e;
+  color: white;
+}
+
+header nav a {
+  color: white;
+  font-size: 0.95rem;
+}
+
+header nav a:hover {
+  color: #e12c2c;
+}
+
+.search-icon-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .search-wrapper {
+    display: none;
+  }
+
+  .search-icon-mobile {
+    display: block;
+  }
+
+  header nav button:first-child {
+    display: none;
+  }
+}

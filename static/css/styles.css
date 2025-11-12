@@ -1,0 +1,5 @@
+/* unique styles for Epiflipboard */
+.logo {
+  display: flex;
+  align-items: center;
+}
