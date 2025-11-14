@@ -16,6 +16,8 @@ pub enum Error {
     State(#[from] crate::state::StateError),
     /// Error initializing the database
     InitDb(#[from] DbErr),
+    /// RSS feed aggregation error
+    GregError(#[from] Box<dyn std::error::Error>),
 }
 
 #[derive(Debug, displaydoc::Display, thiserror::Error)]

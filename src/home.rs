@@ -54,7 +54,7 @@ pub async fn home(
     State(state): State<AppState>,
 ) -> Result<impl IntoResponse, AppError> {
     let articles = ArticleEntity::find()
-        .order_by_desc(entity::article::Column::CreatedAt)
+        .order_by_desc(entity::article::Column::PublishedAt)
         .limit(9)
         .all(&state.db)
         .await
@@ -75,7 +75,9 @@ pub async fn home(
             original_url: article.original_url,
             tag: article.tag,
             image_url: article.image_url,
-            time_ago: format_time_ago(article.created_at),
+            time_ago: format_time_ago(
+                article.published_at.unwrap_or(article.created_at),
+            ),
         })
         .collect();
 

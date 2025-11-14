@@ -12,7 +12,7 @@ impl MigrationTrait for Migration {
                     .table(Article::Table)
                     .if_not_exists()
                     .col(pk_auto(Article::Id))
-                    .col(string(Article::Title))
+                    .col(string(Article::Title).not_null())
                     .col(string(Article::Authors).not_null())
                     .col(string(Article::Publishers).not_null())
                     .col(
@@ -25,6 +25,7 @@ impl MigrationTrait for Migration {
                     .col(string(Article::OriginalUrl).not_null())
                     .col(string(Article::Tag).not_null())
                     .col(string(Article::ImageUrl).not_null())
+                    .col(timestamp(Article::PublishedAt).not_null())
                     .to_owned(),
             )
             .await
@@ -48,4 +49,5 @@ enum Article {
     OriginalUrl,
     Tag,
     ImageUrl,
+    PublishedAt,
 }

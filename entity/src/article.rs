@@ -14,6 +14,7 @@ pub struct Model {
     pub original_url: String,
     pub tag: String,
     pub image_url: String,
+    pub published_at: Option<DateTime>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

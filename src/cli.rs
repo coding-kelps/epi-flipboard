@@ -16,6 +16,8 @@ pub enum Command {
     Serve,
     /// Run database migrations using the workspace `migration` member
     Migrate,
+    /// Aggregate RSS feeds
+    Greg,
 }
 
 pub async fn run() -> Result<(), crate::error::Error> {
@@ -32,6 +34,13 @@ pub async fn run() -> Result<(), crate::error::Error> {
             Migrator::up(&db_connection, None).await?;
 
             Ok(())
+        },
+        Command::Greg => {
+            let database_url = std::env::var("DATABASE_URL")
+                .expect("DATABASE_URL must be set");
+            crate::greg::aggregate_feeds(&database_url)
+                .await
+                .map_err(crate::error::Error::GregError)
         },
     }
 }

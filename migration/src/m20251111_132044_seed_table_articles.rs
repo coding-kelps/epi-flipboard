@@ -22,6 +22,7 @@ impl MigrationTrait for Migration {
             tag: Set("TECHNOLOGY".to_owned()),
             image_url: Set("https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=600&fit=crop".to_owned()),
             created_at: Set((now - Duration::minutes(15)).naive_utc()),
+            published_at: Set(Some((now - Duration::minutes(20)).naive_utc())),
             ..Default::default()
         };
         article::Entity::insert(article).exec(db).await?;
@@ -36,6 +37,7 @@ impl MigrationTrait for Migration {
             tag: Set("BUSINESS".to_owned()),
             image_url: Set("https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop".to_owned()),
             created_at: Set((now - Duration::hours(2)).naive_utc()),
+            published_at: Set(Some((now - Duration::hours(3)).naive_utc())),
             ..Default::default()
         };
         article::Entity::insert(article).exec(db).await?;
@@ -50,6 +52,7 @@ impl MigrationTrait for Migration {
             tag: Set("TRAVEL".to_owned()),
             image_url: Set("https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=600&h=400&fit=crop".to_owned()),
             created_at: Set((now - Duration::hours(5)).naive_utc()),
+            published_at: Set(Some((now - Duration::hours(6)).naive_utc())),
             ..Default::default()
         };
         article::Entity::insert(article).exec(db).await?;
@@ -64,6 +67,7 @@ impl MigrationTrait for Migration {
             tag: Set("DEVELOPMENT".to_owned()),
             image_url: Set("https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&h=400&fit=crop".to_owned()),
             created_at: Set((now - Duration::hours(8)).naive_utc()),
+            published_at: Set(Some((now - Duration::hours(9)).naive_utc())),
             ..Default::default()
         };
         article::Entity::insert(article).exec(db).await?;
@@ -78,6 +82,7 @@ impl MigrationTrait for Migration {
             tag: Set("FOOD & DRINK".to_owned()),
             image_url: Set("https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&h=400&fit=crop".to_owned()),
             created_at: Set((now - Duration::hours(10)).naive_utc()),
+            published_at: Set(Some((now - Duration::hours(11)).naive_utc())),
             ..Default::default()
         };
         article::Entity::insert(article).exec(db).await?;
@@ -92,6 +97,7 @@ impl MigrationTrait for Migration {
             tag: Set("FINANCE".to_owned()),
             image_url: Set("https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop".to_owned()),
             created_at: Set((now - Duration::hours(28)).naive_utc()),
+            published_at: Set(Some((now - Duration::hours(30)).naive_utc())),
             ..Default::default()
         };
         article::Entity::insert(article).exec(db).await?;
@@ -106,6 +112,7 @@ impl MigrationTrait for Migration {
             tag: Set("CAREERS".to_owned()),
             image_url: Set("https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&h=400&fit=crop".to_owned()),
             created_at: Set((now - Duration::hours(36)).naive_utc()),
+            published_at: Set(Some((now - Duration::hours(40)).naive_utc())),
             ..Default::default()
         };
         article::Entity::insert(article).exec(db).await?;
@@ -120,6 +127,7 @@ impl MigrationTrait for Migration {
             tag: Set("DESIGN".to_owned()),
             image_url: Set("https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&h=400&fit=crop".to_owned()),
             created_at: Set((now - Duration::hours(48)).naive_utc()),
+            published_at: Set(Some((now - Duration::hours(50)).naive_utc())),
             ..Default::default()
         };
         article::Entity::insert(article).exec(db).await?;
@@ -134,6 +142,7 @@ impl MigrationTrait for Migration {
             tag: Set("HEALTH".to_owned()),
             image_url: Set("https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=600&h=400&fit=crop".to_owned()),
             created_at: Set((now - Duration::hours(60)).naive_utc()),
+            published_at: Set(Some((now - Duration::hours(62)).naive_utc())),
             ..Default::default()
         };
         article::Entity::insert(article).exec(db).await?;

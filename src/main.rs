@@ -1,5 +1,6 @@
 pub mod cli;
 pub mod error;
+pub mod greg;
 pub mod home;
 pub mod state;
 
