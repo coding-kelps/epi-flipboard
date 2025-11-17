@@ -1,18 +1,39 @@
 use chrono::DateTime;
 use entity::article::ActiveModel;
+use opml::{Outline, OPML};
 use rss::Channel;
 use sea_orm::Set;
 use sea_orm::{Database, EntityTrait};
 use std::error::Error;
+use std::fs;
 
-pub async fn aggregate_feeds(db_url: &str) -> Result<(), Box<dyn Error>> {
+/// read the awesome rss feed
+pub async fn aggregate_feeds(_db_url: &str) -> Result<(), Box<dyn Error>> {
+    let paths = fs::read_dir("awesome-rss-feeds/recommended/with_category")?;
+    for path in paths {
+        let path = path?.path();
+        let file_name = path
+            .file_name()
+            .and_then(|name| name.to_str())
+            .unwrap_or("unknown");
+        // remove the extension from the file name
+        let category =
+            file_name.split('.').nth(1).unwrap_or("unknown").to_uppercase();
+        let file_content = fs::read_to_string(&path)?;
+        let opml: OPML = opml::OPML::from_str(&file_content)?;
+        for outline in opml.body.outlines {
+            println!("{}", outline.text);
+        }
+    }
+    Ok(())
+}
+
+pub async fn collect_rss_data(
+    db_url: &str, xml_url: &str, category: &str,
+) -> Result<(), Box<dyn Error>> {
     let db = Database::connect(db_url).await?;
 
-    let content =
-        reqwest::get("https://rss.nytimes.com/services/xml/rss/nyt/World.xml")
-            .await?
-            .bytes()
-            .await?;
+    let content = reqwest::get(xml_url).await?.bytes().await?;
     let channel = Channel::read_from(&content[..])?;
 
     for item in channel.items() {
