@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8' ?>
+<?xml version='1.0' encoding='UTF-8'?>
 <opml version="1.0">
 	<head>
 		<title>Export from Plenary</title>
@@ -23,7 +23,7 @@
 			<outline text="SwiftRocks" title="SwiftRocks" description="SwiftRocks is a blog about how Swift works and general iOS tips and tricks." xmlUrl="https://swiftrocks.com/rss.xml" type="rss" />
 			<outline text="The Atomic Birdhouse" title="The Atomic Birdhouse" description="Recent content on The Atomic Birdhouse" xmlUrl="https://atomicbird.com/index.xml" type="rss" />
 			<outline text="Under the Radar" title="Under the Radar" description="From development and design to marketing and support, Under the Radar is all about independent app development. It's never longer than 30 minutes. Hosted by Marco Arment and David Smith." xmlUrl="https://www.relay.fm/radar/feed" type="rss" />
-			<outline text="Use Your Loaf - iOS Development News & Tips" title="Use Your Loaf - iOS Development News & Tips" description="Recent content on Use Your Loaf - iOS Development News & Tips" xmlUrl="https://useyourloaf.com/blog/rss.xml" type="rss" />
+			<outline text="Use Your Loaf - iOS Development News and Tips" title="Use Your Loaf - iOS Development News and Tips" description="Recent content on Use Your Loaf - iOS Development News and Tips" xmlUrl="https://useyourloaf.com/blog/rss.xml" type="rss" />
 			<outline text="inessential.com" title="inessential.com" description="Brent Simmons’s weblog." xmlUrl="https://inessential.com/xml/rss.xml" type="rss" />
 			<outline text="tyler.io" title="tyler.io" description="" xmlUrl="https://tyler.io/feed/" type="rss" />
 		</outline>

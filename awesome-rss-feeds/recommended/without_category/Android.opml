@@ -26,7 +26,7 @@ Check out androidauthority.com for all the best news and reviews for your favori
 		<outline text="Cyanogen Mods" title="Cyanogen Mods" description="Mod APK | GCam | LineageOS" xmlUrl="https://www.cyanogenmods.org/feed" type="rss" />
 		<outline text="Droid Life" title="Droid Life" description="Opinionated Android news." xmlUrl="https://www.droid-life.com/feed" type="rss" />
 		<outline text="GSMArena.com - Latest articles" title="GSMArena.com - Latest articles" description="GSMArena.com is the ultimate resource for GSM handset information. This feed contains the latest articles (news and reviews) in chronological order." xmlUrl="https://www.gsmarena.com/rss-news-reviews.php3" type="rss" />
-		<outline text="Phandroid" title="Phandroid" description="Android Phone News, Rumors, Reviews, Apps, Forums & More!" xmlUrl="http://feeds2.feedburner.com/AndroidPhoneFans" type="rss" />
+		<outline text="Phandroid" title="Phandroid" description="Android Phone News, Rumors, Reviews, Apps, Forums and More!" xmlUrl="http://feeds2.feedburner.com/AndroidPhoneFans" type="rss" />
 		<outline text="TalkAndroid" title="TalkAndroid" description="The latest in android news, rumours, and updates, including device news and apps!" xmlUrl="http://feeds.feedburner.com/AndroidNewsGoogleAndroidForums" type="rss" />
 		<outline text="xda-developers" title="xda-developers" description="Android and Windows Phone Development Community" xmlUrl="https://data.xda-developers.com/portal-feed" type="rss" />
 	</body>

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8' ?>
+<?xml version='1.0' encoding='UTF-8'?>
 <opml version="1.0">
 	<head>
 		<title>Export from Plenary</title>
@@ -13,7 +13,6 @@
 			<outline text="Beauty – Indian Fashion Blog" title="Beauty – Indian Fashion Blog" description="" xmlUrl="https://www.fashionlady.in/category/beauty-tips/feed" type="rss" />
 			<outline text="Blog – The Beauty Brains" title="Blog – The Beauty Brains" description="Real scientists answer your beauty questions" xmlUrl="https://thebeautybrains.com/blog/feed/" type="rss" />
 			<outline text="DORÉ" title="DORÉ" description="" xmlUrl="https://www.wearedore.com/feed" type="rss" />
-			<outline text="From Head To Toe" title="From Head To Toe" description="A makeup and beauty blog by Jen "From Head To Toe" that showcases makeup tutorials, fashion, hair, nails, swatches, and product reviews." xmlUrl="http://feeds.feedburner.com/frmheadtotoe" type="rss" />
 			<outline text="Into The Gloss - Beauty Tips, Trends, And Product Reviews" title="Into The Gloss - Beauty Tips, Trends, And Product Reviews" description="The best in beauty tips, makeup tutorials, product reviews, and techniques from industry leaders worldwide. Into The Gloss is beauty, from the Inside." xmlUrl="https://feeds.feedburner.com/intothegloss/oqoU" type="rss" />
 			<outline text="POPSUGAR Beauty" title="POPSUGAR Beauty" description="Top Beauty Stories" xmlUrl="https://www.popsugar.com/beauty/feed" type="rss" />
 			<outline text="Refinery29" title="Refinery29" description="Refinery29" xmlUrl="https://www.refinery29.com/beauty/rss.xml" type="rss" />
