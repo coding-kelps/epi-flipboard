@@ -959,6 +959,7 @@ dependencies = [
  "dotenvy",
  "entity",
  "migration",
+ "nanohtml2text",
  "opml",
  "pretty-error-debug",
  "pretty-error-debug-derive",
@@ -1879,6 +1880,12 @@ dependencies = [
  "wasi",
  "windows-sys 0.61.2",
 ]
+
+[[package]]
+name = "nanohtml2text"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "11ec1bc47d34ae756616f387c11fd0595f86f2cc7e6473bde9e3ded30cb902a1"
 
 [[package]]
 name = "native-tls"
