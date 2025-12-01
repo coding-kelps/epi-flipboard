@@ -61,7 +61,7 @@
       </div>
       <div class="modal-footer">
         <button type="submit" class="btn-primary">Create account</button>
-        <p>Already have an account? <a href="#login">Log in</a></p>
+        <p>Already have an account? <a href="#" hx-get="/login" hx-target="body" hx-swap="beforeend" onclick="document.getElementById('signup-modal').remove()">Log in</a></p>
       </div>
     </form>
   </div>

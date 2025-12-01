@@ -34,6 +34,8 @@ pub enum AppError {
     EmailExists,
     /// Password hashing error
     HashError,
+    /// Invalid credentials
+    InvalidCredentials,
 }
 
 impl IntoResponse for AppError {
@@ -43,6 +45,7 @@ impl IntoResponse for AppError {
         struct Tmpl {
             error: String,
             status: StatusCode,
+            username: String,
         }
 
         let status = match &self {
@@ -52,8 +55,13 @@ impl IntoResponse for AppError {
             AppError::DatabaseError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::EmailExists => StatusCode::CONFLICT,
             AppError::HashError => StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::InvalidCredentials => StatusCode::UNAUTHORIZED,
         };
-        let tmpl = Tmpl { error: self.to_string(), status };
+        let tmpl = Tmpl {
+            error: self.to_string(),
+            status,
+            username: String::new(),
+        };
         if let Ok(body) = tmpl.render() {
             (status, Html(body)).into_response()
         } else {

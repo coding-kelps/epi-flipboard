@@ -4,11 +4,13 @@ use axum::{extract::State, response::IntoResponse};
 use entity::article::Entity as ArticleEntity;
 use sea_orm::entity::prelude::DateTime;
 use sea_orm::{EntityTrait, QueryFilter, QueryOrder, QuerySelect};
+use tower_cookies::Cookies;
 
 #[derive(Template)]
 #[template(path = "home.html")]
 struct HomeTemplate {
     articles: Vec<ArticleDisplay>,
+    username: String,
 }
 
 struct ArticleDisplay {
@@ -52,8 +54,9 @@ fn format_time_ago(created_at: DateTime) -> String {
 
 pub async fn home(
     State(state): State<AppState>,
+    cookies: Cookies,
 ) -> Result<impl IntoResponse, AppError> {
-    // Get 9 distinct tags first
+    let username = cookies.get("username").map(|c| c.value().to_string());
     let distinct_tags: Vec<String> = ArticleEntity::find()
         .select_only()
         .column(entity::article::Column::Tag)
@@ -99,7 +102,10 @@ pub async fn home(
         }
     }
 
-    let tmpl = HomeTemplate { articles };
+    let tmpl = HomeTemplate {
+        articles,
+        username: username.unwrap_or_default(),
+    };
     let rendered = tmpl.render().map_err(|e| {
         tracing::error!("Template rendering error: {}", e);
         AppError::Io(std::io::Error::new(

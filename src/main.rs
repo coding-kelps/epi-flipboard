@@ -14,7 +14,7 @@ use tower_http::trace::TraceLayer;
 use tracing::event;
 use tracing::Level;
 
-use crate::auth::{get_signup, post_signup};
+use crate::auth::{get_signup, post_signup, get_login, post_login, logout};
 use crate::error::AppError;
 use crate::error::Error;
 use crate::home::home;
@@ -44,8 +44,12 @@ async fn run_server() -> Result<(), Error> {
         .route("/home", get(home))
         .route("/signup", get(get_signup))
         .route("/signup", post(post_signup))
+        .route("/login", get(get_login))
+        .route("/login", post(post_login))
+        .route("/logout", get(logout))
         .nest_service("/static", ServeDir::new("static"))
         .fallback(|| async { AppError::NotFound })
+        .layer(tower_cookies::CookieManagerLayer::new())
         .with_state(state)
         .layer(TraceLayer::new_for_http());
 
