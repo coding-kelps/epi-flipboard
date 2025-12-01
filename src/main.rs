@@ -14,7 +14,7 @@ use tower_http::trace::TraceLayer;
 use tracing::event;
 use tracing::Level;
 
-use crate::auth::{get_signup, post_signup, get_login, post_login, logout};
+use crate::auth::{get_login, get_signup, logout, post_login, post_signup};
 use crate::error::AppError;
 use crate::error::Error;
 use crate::home::home;

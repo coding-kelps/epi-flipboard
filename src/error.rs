@@ -57,11 +57,8 @@ impl IntoResponse for AppError {
             AppError::HashError => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::InvalidCredentials => StatusCode::UNAUTHORIZED,
         };
-        let tmpl = Tmpl {
-            error: self.to_string(),
-            status,
-            username: String::new(),
-        };
+        let tmpl =
+            Tmpl { error: self.to_string(), status, username: String::new() };
         if let Ok(body) = tmpl.render() {
             (status, Html(body)).into_response()
         } else {

@@ -18,7 +18,9 @@
       <button>Newsletters</button>
       <a href="#search" class="search-icon-mobile">🔍</a>
       {% if !username.is_empty() %}
-      <span style="color: var(--color-text); margin: 0 1rem;">Welcome, {{ username }}</span>
+      <span style="color: var(--color-text); margin: 0 1rem"
+        >Welcome, {{ username }}</span
+      >
       <a href="/logout">Log out</a>
       {% else %}
       <button
@@ -29,7 +31,9 @@
       >
         Sign up
       </button>
-      <a href="#" hx-get="/login" hx-target="body" hx-swap="beforeend">Log in</a>
+      <a href="#" hx-get="/login" hx-target="body" hx-swap="beforeend"
+        >Log in</a
+      >
       {% endif %}
     </nav>
   </div>
