@@ -1,0 +1,10 @@
+<div class="toast {{ type }}">
+  <span class="toast-icon">{{ icon }}</span>
+  <div class="toast-content">
+    {% if !title.is_empty() %}
+    <div class="toast-title">{{ title }}</div>
+    {% endif %}
+    <div class="toast-message">{{ message }}</div>
+  </div>
+  <button class="toast-close" onclick="this.remove()">×</button>
+</div>

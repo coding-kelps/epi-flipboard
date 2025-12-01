@@ -30,6 +30,10 @@ pub enum AppError {
     State(#[from] crate::state::StateError),
     /// Database error
     DatabaseError(#[from] sea_orm::DbErr),
+    /// Email already exists
+    EmailExists,
+    /// Password hashing error
+    HashError,
 }
 
 impl IntoResponse for AppError {
@@ -46,6 +50,8 @@ impl IntoResponse for AppError {
             AppError::Io(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::State(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::DatabaseError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::EmailExists => StatusCode::CONFLICT,
+            AppError::HashError => StatusCode::INTERNAL_SERVER_ERROR,
         };
         let tmpl = Tmpl { error: self.to_string(), status };
         if let Ok(body) = tmpl.render() {

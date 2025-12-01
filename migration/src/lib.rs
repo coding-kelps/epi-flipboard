@@ -2,6 +2,7 @@ pub use sea_orm_migration::prelude::*;
 
 mod m20251111_131154_create_table_articles;
 mod m20251111_132044_seed_table_articles;
+mod m20251201_135107_create_table_users;
 
 pub struct Migrator;
 
@@ -11,6 +12,7 @@ impl MigratorTrait for Migrator {
         vec![
             Box::new(m20251111_131154_create_table_articles::Migration),
             Box::new(m20251111_132044_seed_table_articles::Migration),
+            Box::new(m20251201_135107_create_table_users::Migration),
         ]
     }
 }

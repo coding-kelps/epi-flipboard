@@ -34,3 +34,5 @@ reqwest = "0.12.24"
 rss = "2.0.12"
 opml = "1.1.6"
 nanohtml2text = "0.2.1"
+bcrypt = "0.16.0"
+serde = { version = "1.0", features = ["derive"] }

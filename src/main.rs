@@ -1,3 +1,4 @@
+pub mod auth;
 pub mod cli;
 pub mod error;
 pub mod greg;
@@ -5,7 +6,7 @@ pub mod home;
 pub mod state;
 
 use axum::response::Redirect;
-use axum::routing::get;
+use axum::routing::{get, post};
 use axum::Router;
 use dotenvy::dotenv;
 use tower_http::services::ServeDir;
@@ -13,6 +14,7 @@ use tower_http::trace::TraceLayer;
 use tracing::event;
 use tracing::Level;
 
+use crate::auth::{get_signup, post_signup};
 use crate::error::AppError;
 use crate::error::Error;
 use crate::home::home;
@@ -40,6 +42,8 @@ async fn run_server() -> Result<(), Error> {
     let app = Router::new()
         .route("/", get(|| async { Redirect::to("/home") }))
         .route("/home", get(home))
+        .route("/signup", get(get_signup))
+        .route("/signup", post(post_signup))
         .nest_service("/static", ServeDir::new("static"))
         .fallback(|| async { AppError::NotFound })
         .with_state(state)

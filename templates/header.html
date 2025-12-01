@@ -17,7 +17,14 @@
     <nav>
       <button>Newsletters</button>
       <a href="#search" class="search-icon-mobile">🔍</a>
-      <button class="button-primary">Sign up</button>
+      <button
+        class="button-primary"
+        hx-get="/signup"
+        hx-target="body"
+        hx-swap="beforeend"
+      >
+        Sign up
+      </button>
       <a href="#login">Log in</a>
     </nav>
   </div>
