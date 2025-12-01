@@ -18,16 +18,32 @@ services:
       timeout: 5s
       retries: 5
 
+  migration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: epiflipboard-migration
+    command:
+      - migrate
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-epiflipboard}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-epiflipboard}
+      RUST_LOG: info
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   app:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: epiflipboard-app
+    command:
+      - serve
     environment:
-      DATABASE_URL: postgresql://epiflipboard:password@postgres:5432/epiflipboard
+      DATABASE_URL: postgresql://${POSTGRES_USER:-epiflipboard}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-epiflipboard}
       RUST_LOG: info
     ports:
-      - "3000:3000"
+      - "4444:4444"
     depends_on:
       postgres:
         condition: service_healthy

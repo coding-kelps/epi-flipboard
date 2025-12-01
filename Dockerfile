@@ -13,12 +13,21 @@ RUN cargo build --release
 
 FROM debian:bookworm-slim
 
-RUN apt-get update && apt-get install -y libpq5 ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+      libpq5 \
+      ca-certificates \
+      && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 COPY --from=builder /app/target/release/epi-flipboard ./
 
-EXPOSE 3000
+COPY templates ./templates
 
-CMD ["./epi-flipboard"]
+COPY static ./static
+
+EXPOSE 4444
+
+ENTRYPOINT ["/app/epi-flipboard"]
+
+CMD ["serve"]
