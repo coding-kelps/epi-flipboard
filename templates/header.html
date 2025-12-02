@@ -14,13 +14,11 @@
       <input type="text" placeholder="Search epiFlipboard" />
       <span>🔍</span>
     </div>
-    <nav id="header-nav">
+    <nav id="header-nav" hx-swap-oob="true">
       <button>Newsletters</button>
       <a href="#search" class="search-icon-mobile">🔍</a>
       {% if !username.is_empty() %}
-      <span style="color: var(--color-text); margin: 0 1rem"
-        >Welcome, {{ username }}</span
-      >
+      <span style="color: white; margin: 0 1rem">Hey, {{ username }}</span>
       <a href="/logout">Log out</a>
       {% else %}
       <button
