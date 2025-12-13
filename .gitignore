@@ -16,4 +16,5 @@ target
 # local VS Code settings
 .vscode/
 .env
+.envrc
 .github/instructions/code.instructions.md

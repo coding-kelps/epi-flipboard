@@ -1,46 +1,91 @@
 use clap::{Parser, Subcommand};
-use migration::{Migrator, MigratorTrait};
+use std::path::PathBuf;
 
-/// Simple CLI for the market server. Defaults to `serve` when no subcommand
-/// is provided.
-#[derive(Debug, Parser)]
+macro_rules! env_prefix {
+    ($name:expr) => {
+        concat!("EPIFLIPBOARD_", $name)
+    };
+}
+
+/// Simple CLI for the server.
+#[derive(Debug, Parser, Clone)]
 #[command(author, version, about = "Finwar market server CLI")]
-pub struct Opts {
-    #[command(subcommand)]
-    pub command: Command,
+pub struct Args {
+  /// Log level (trace, debug, info, warn, error)
+  #[arg(long, env = env_prefix!("LOG_LEVEL"), default_value = "info")]
+  pub log_level: String,
+
+  #[command(subcommand)]
+  pub command: Commands,
 }
 
-#[derive(Debug, Subcommand)]
-pub enum Command {
-    /// Start the HTTP server (default)
-    Serve,
-    /// Run database migrations using the workspace `migration` member
-    Migrate,
-    /// Aggregate RSS feeds
-    Greg,
-}
+#[derive(Subcommand, Debug, Clone)]
+pub enum Commands {
+    Serve {
+        /// Host to bind to
+        #[arg(long, env = env_prefix!("HOST"), default_value = "0.0.0.0")]
+        host: String,
 
-pub async fn run() -> Result<(), crate::error::Error> {
-    let opts = Opts::parse();
+        /// Port to bind to
+        #[arg(short, long, env = env_prefix!("PORT"), default_value = "8080")]
+        port: u16,
 
-    match opts.command {
-        Command::Serve => crate::run_server().await,
-        Command::Migrate => {
-            let database_url = std::env::var("DATABASE_URL")
-                .expect("DATABASE_URL must be set");
-            let db_connection = sea_orm::Database::connect(&database_url)
-                .await
-                .map_err(crate::error::Error::InitDb)?;
-            Migrator::up(&db_connection, None).await?;
+        /// Database user
+        #[arg(long, env = env_prefix!("DB_USER"), required_unless_present = "db_user_file")]
+        db_user: Option<String>,
 
-            Ok(())
-        },
-        Command::Greg => {
-            let database_url = std::env::var("DATABASE_URL")
-                .expect("DATABASE_URL must be set");
-            crate::greg::aggregate_feeds(&database_url)
-                .await
-                .map_err(crate::error::Error::GregError)
-        },
+        /// Database user file path
+        #[arg(long, env = env_prefix!("DB_USER_FILE"), required_unless_present = "db_user")]
+        db_user_file: Option<PathBuf>,
+
+        /// Database password
+        #[arg(long, env = env_prefix!("DB_PASSWORD"), required_unless_present = "db_password_file")]
+        db_password: Option<String>,
+
+        /// Database password file path
+        #[arg(long, env = env_prefix!("DB_PASSWORD_FILE"), required_unless_present = "db_password")]
+        db_password_file: Option<PathBuf>,
+
+        /// Database host
+        #[arg(long, env = env_prefix!("DB_HOST"), default_value = "localhost")]
+        db_host: String,
+    
+        /// Database port
+        #[arg(long, env = env_prefix!("DB_PORT"), default_value = "5432")]
+        db_port: u16,
+
+        /// Database name
+        #[arg(long, env = env_prefix!("DB_NAME"), default_value = "postgres")]
+        db_name: String,
+    },
+
+    Migrate {
+        /// Database user
+        #[arg(long, env = env_prefix!("DB_USER"), required_unless_present = "db_user_file")]
+        db_user: Option<String>,
+
+        /// Database user file path
+        #[arg(long, env = env_prefix!("DB_USER_FILE"), required_unless_present = "db_user")]
+        db_user_file: Option<PathBuf>,
+
+        /// Database password
+        #[arg(long, env = env_prefix!("DB_PASSWORD"), required_unless_present = "db_password_file")]
+        db_password: Option<String>,
+
+        /// Database password file path
+        #[arg(long, env = env_prefix!("DB_PASSWORD_FILE"), required_unless_present = "db_password")]
+        db_password_file: Option<PathBuf>,
+
+        /// Database host
+        #[arg(long, env = env_prefix!("DB_HOST"), default_value = "localhost")]
+        db_host: String,
+    
+        /// Database port
+        #[arg(long, env = env_prefix!("DB_PORT"), default_value = "5432")]
+        db_port: u16,
+
+        /// Database name
+        #[arg(long, env = env_prefix!("DB_NAME"), default_value = "postgres")]
+        db_name: String,
     }
 }

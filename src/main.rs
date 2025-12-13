@@ -1,63 +1,55 @@
-pub mod auth;
-pub mod cli;
-pub mod error;
-pub mod greg;
-pub mod home;
-pub mod state;
+mod auth;
+mod cli;
+mod config;
+mod serve;
+mod migrate;
+mod error;
+mod greg;
+mod home;
+mod state;
 
-use axum::response::Redirect;
-use axum::routing::{get, post};
-use axum::Router;
-use dotenvy::dotenv;
-use tower_http::services::ServeDir;
-use tower_http::trace::TraceLayer;
 use tracing::event;
 use tracing::Level;
+use clap::Parser;
 
-use crate::auth::{get_login, get_signup, logout, post_login, post_signup};
-use crate::error::AppError;
+use crate::cli::{Args, Commands};
+use crate::config::Config;
 use crate::error::Error;
-use crate::home::home;
-use crate::state::AppState;
+
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    dotenv().ok();
+    let args = Args::parse();
+    let cfg = Config::from_args(args.clone());
 
-    tracing_subscriber::fmt()
-        .with_max_level(Level::DEBUG)
-        .with_test_writer()
-        .init();
+    init_observability(&cfg)?;
 
-    // Delegate to cli module to choose between server or migration commands.
-    cli::run().await
-}
+    match args.command {
+        Commands::Serve { .. } => serve::serve(cfg).await?,
+        Commands::Migrate { .. } => migrate::migrate(cfg).await?,
+    }
 
-async fn run_server() -> Result<(), Error> {
-    let addr = "0.0.0.0";
-    let port = 4444;
-
-    let state = AppState::new().await.map_err(Error::State)?;
-
-    let app = Router::new()
-        .route("/", get(|| async { Redirect::to("/home") }))
-        .route("/home", get(home))
-        .route("/signup", get(get_signup))
-        .route("/signup", post(post_signup))
-        .route("/login", get(get_login))
-        .route("/login", post(post_login))
-        .route("/logout", get(logout))
-        .nest_service("/static", ServeDir::new("static"))
-        .fallback(|| async { AppError::NotFound })
-        .layer(tower_cookies::CookieManagerLayer::new())
-        .with_state(state)
-        .layer(TraceLayer::new_for_http());
-
-    let listener = tokio::net::TcpListener::bind(format!("{addr}:{port}"))
-        .await
-        .map_err(Error::Bind)?;
-    event!(Level::INFO, "server started and listening on http://{addr}:{port}");
-
-    axum::serve(listener, app).await.map_err(Error::Run)?;
     Ok(())
 }
+
+fn init_observability(cfg: &Config) -> Result<(), Error> {
+    match cfg.log.level.parse::<Level>() {
+        Ok(level) => {
+            tracing_subscriber::fmt()
+                .with_max_level(level)
+                .with_test_writer()
+                .init();
+        },
+        Err(_) => {
+            tracing_subscriber::fmt()
+                .with_max_level(Level::INFO)
+                .with_test_writer()
+                .init();
+
+            event!(Level::WARN, "log level wrongly set at \"{}\" continuing server at default level \"info\"", cfg.log.level);
+        }
+    }
+
+    Ok(())
+}
+

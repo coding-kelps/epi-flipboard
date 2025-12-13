@@ -1,5 +1,5 @@
-// use sea_orm::DatabaseConnection;
 use std::fmt;
+use sea_orm::DatabaseConnection;
 
 #[derive(Debug)]
 pub enum StateError {
@@ -28,14 +28,9 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub async fn new() -> Result<Self, StateError> {
+    pub async fn new(db: DatabaseConnection) -> Result<Self, StateError> {
         Ok(AppState {
-            db: sea_orm::Database::connect(
-                std::env::var("DATABASE_URL")
-                    .map_err(|_| StateError::MissingState)?,
-            )
-            .await
-            .map_err(|_| StateError::InitState)?,
+            db: db,
         })
     }
 }

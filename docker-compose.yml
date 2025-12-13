@@ -26,7 +26,11 @@ services:
     command:
       - migrate
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-epiflipboard}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-epiflipboard}
+      EPIFLIPBOARD_DB_USER: ${POSTGRES_USER:-epiflipboard}
+      EPIFLIPBOARD_DB_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      EPIFLIPBOARD_DB_HOST: postgres
+      EPIFLIPBOARD_DB_PORT: 5432
+      EPIFLIPBOARD_DB_NAME: ${POSTGRES_DB:-epiflipboard}
       RUST_LOG: info
     depends_on:
       postgres:
@@ -40,10 +44,14 @@ services:
     command:
       - serve
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-epiflipboard}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-epiflipboard}
-      RUST_LOG: info
+      EPIFLIPBOARD_DB_USER: ${POSTGRES_USER:-epiflipboard}
+      EPIFLIPBOARD_DB_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      EPIFLIPBOARD_DB_HOST: postgres
+      EPIFLIPBOARD_DB_PORT: 5432
+      EPIFLIPBOARD_DB_NAME: ${POSTGRES_DB:-epiflipboard}
+      EPIFLIPBOARD_RUST_LOG: info
     ports:
-      - "4444:4444"
+      - "8080:8080"
     depends_on:
       postgres:
         condition: service_healthy

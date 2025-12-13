@@ -1,10 +1,19 @@
-use crate::{error::AppError, state::AppState};
 use askama::Template;
 use axum::{extract::State, response::IntoResponse};
 use entity::article::Entity as ArticleEntity;
-use sea_orm::entity::prelude::DateTime;
-use sea_orm::{EntityTrait, QueryFilter, QueryOrder, QuerySelect};
+use sea_orm::{
+    entity::prelude::DateTime,
+    EntityTrait,
+    QueryFilter,
+    QueryOrder,
+    QuerySelect,
+};
 use tower_cookies::Cookies;
+
+use crate::{
+    error::AppError,
+    state::AppState,
+};
 
 #[derive(Template)]
 #[template(path = "home.html")]
