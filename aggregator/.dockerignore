@@ -1,0 +1,31 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[codz]
+*$py.class
+
+# Tests
+tests/
+
+# Build
+dist/
+
+# Version control
+,git/
+.gitignore
+.pre-commit-config.yaml
+cliff.toml
+CHANGELOG.md
+
+# Environments
+.env
+.envrc
+.venv
+
+# Ruff stuff:
+.ruff_cache/
+
+# Dagster artefacts
+.tmp_dagster_home_*
+
+# VS Code configuration
+.vscode/

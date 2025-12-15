@@ -1,0 +1,55 @@
+---
+name: Release
+
+permissions:
+  packages: write
+  contents: read
+
+on:
+  push:
+    tags:
+      - '*-v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  extract-version:
+    runs-on: ubuntu-latest
+    outputs:
+      project: ${{ steps.get.outputs.project }}
+      version: ${{ steps.get.outputs.version }}
+    steps:
+      - name: Parse tag and validate
+        id: get
+        run: |
+          set -euo pipefail
+          TAG=${GITHUB_REF#refs/tags/}
+          # ensure it ends with -vMAJOR.MINOR.PATCH
+          if [[ ! $TAG =~ -v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Tag '$TAG' does not match '<project>-vX.Y.Z' pattern" >&2
+            exit 1
+          fi
+          VERSION=${TAG##*-v}
+          PROJECT=${TAG%-v$VERSION}
+          echo "project=$PROJECT" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+  build-push-server:
+    needs: extract-version
+    if: needs.extract-version.outputs.project == 'server'
+    uses: ./.github/workflows/container_build_push.yaml
+    with:
+      context: server
+      dockerfile: Dockerfile
+      image_name: server
+      version: ${{ needs.extract-version.outputs.version }}
+      ref: ${{ github.sha }}
+
+  build-push-aggregator:
+    needs: extract-version
+    if: needs.extract-version.outputs.project == 'aggregator'
+    uses: ./.github/workflows/container_build_push.yaml
+    with:
+      context: aggregator
+      dockerfile: Dockerfile
+      image_name: aggregator
+      version: ${{ needs.extract-version.outputs.version }}
+      ref: ${{ github.sha }}
