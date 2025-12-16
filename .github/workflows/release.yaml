@@ -34,12 +34,12 @@ jobs:
 
   build-push-server:
     needs: extract-version
-    if: needs.extract-version.outputs.project == 'server'
+    if: needs.extract-version.outputs.project == 'webserver'
     uses: ./.github/workflows/container_build_push.yaml
     with:
-      context: server
+      context: webserver
       dockerfile: Dockerfile
-      image_name: server
+      image_name: webserver
       version: ${{ needs.extract-version.outputs.version }}
       ref: ${{ github.sha }}
 

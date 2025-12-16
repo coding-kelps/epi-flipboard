@@ -1,0 +1,37 @@
+{
+  "name": "epi-flipboard-webserver",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "bun --bun next dev",
+    "build": "bun --bun next build",
+    "start": "bun --bun next start",
+    "lint": "bun --bun eslint"
+  },
+  "dependencies": {
+    "@prisma/adapter-libsql": "^7.2.0",
+    "@prisma/adapter-pg": "^7.2.0",
+    "@prisma/client": "^7.2.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.562.0",
+    "next": "16.0.10",
+    "pg": "^8.16.3",
+    "probe-image-size": "^7.2.3",
+    "react": "19.2.1",
+    "react-dom": "19.2.1",
+    "tailwind-merge": "^3.4.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/pg": "^8.16.0",
+    "@types/probe-image-size": "^7.2.5",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.10",
+    "prisma": "^7.2.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
