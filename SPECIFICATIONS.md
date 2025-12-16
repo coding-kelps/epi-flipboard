@@ -3,8 +3,7 @@
 #### **1.1 Objective**
 
 Develop a cross-platform digital content aggregation platform, functionally similar to **Flipboard** ([www.flipboard.com](http://www.flipboard.com)), accessible via:
-- **Web**: [https://flipboard.kelps.io](https://flipboard.kelps.io)
-- **Mobile apps**: iOS and Android
+- **Web**: [https://epi-flipboard.kelps.io](https://epi-flipboard.kelps.io)
 
 The platform allows users to discover, curate, and read information from various sources and topics in a personalized, magazine-style interface.
 
@@ -13,15 +12,13 @@ The platform allows users to discover, curate, and read information from various
 | Platform    | Target Devices                                  | Notes                                                   |
 | ----------- | ----------------------------------------------- | ------------------------------------------------------- |
 | Web App     | Modern browsers (Chrome, Safari, Edge, Firefox) | Responsive, SEO-optimized                               |
-| iOS App     | iPhone, iPad (iOS 15+)                          | Available as an IPA from the GitHub repository releases |
-| Android App | Phones & Tablets (Android 10+)                  | Available as an APK from the GitHub repository releases |
 
 #### **2.1 Suggested Technology Stack**
 
 | Layer                          | Technology (Proposed) |
 | ------------------------------ | --------------------- |
-| **Frontend (Mobile & Web)**    | ???                   |
-| **Backend**                    | Rust (Axum)           |
+| **Frontend**                   | Next.js               |
+| **Backend**                    | Next.js (server-side) |
 | **Database**                   | PostgreSQL            |
 | **Hosting Infrastructure**     | Kubernetes cluster    |
 | **CI/CD**                      | GitHub Actions        |
@@ -46,6 +43,7 @@ The platform allows users to discover, curate, and read information from various
     - Consent management during signup.
     - Data export and delete capabilities.
     - Privacy policy acceptance required.
+
 #### **3.2 Information Sources and Topics**
 
 - **Source Listing**
