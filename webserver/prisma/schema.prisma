@@ -12,7 +12,6 @@ datasource db {
 model User { 
   id             Int      @id @default(autoincrement()) @map("user_id")
   createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
   email          String   @unique
   name           String?
   password       String
@@ -24,11 +23,11 @@ model User {
 model Article {
   id          Int       @id @default(autoincrement()) @map("article_id")
   createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  title       String 
+  title       String
+  description String
   authors     String[]
   publishedAt DateTime  @map("published_at")
-  originalUrl String    @unique
+  originalUrl String    @unique @map("original_url")
   imageUrl    String?   @map("image_url")
   publisher   Publisher @relation(fields: [publisherId], references: [id])
   publisherId Int       @map("publisher_id")
@@ -38,8 +37,10 @@ model Article {
 }
 
 model Publisher {
-  id       Int       @id @default(autoincrement()) @map("publisher_id")
-  name     String    @unique
+  id          Int     @id @default(autoincrement()) @map("publisher_id")
+  name        String  @unique
+  displayName String? @map("display_name")
+  imageUrl    String? @map("image_url")
   articles Article[]
 
   @@map("publishers")

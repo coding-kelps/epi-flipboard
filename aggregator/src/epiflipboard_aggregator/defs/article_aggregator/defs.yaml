@@ -9,12 +9,13 @@ attributes:
     - https://raw.githubusercontent.com/plenaryapp/awesome-rss-feeds/refs/heads/master/countries/with_category/Australia.opml
     - https://raw.githubusercontent.com/plenaryapp/awesome-rss-feeds/refs/heads/master/countries/with_category/South%20Africa.opml
   max_article_per_feed: 5
-  table_name: article
+  articles_table_name: articles
+  publishers_table_name: publishers
   db_username: "{{ env.POSTGRES_USER }}"
   db_password: "{{ env.POSTGRES_PASSWORD }}"
   db_host: "{{ env.POSTGRES_HOST }}"
   db_port: "{{ env.POSTGRES_PORT }}"
-  db_db: "{{ env.POSTGRES_DB }}"
+  db_name: "{{ env.POSTGRES_DB }}"
 
 requirements:
   env:

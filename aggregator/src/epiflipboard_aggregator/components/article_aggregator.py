@@ -9,8 +9,6 @@ from typing import List
 
 from epiflipboard_aggregator.resources import PostgreSQLResource
 
-DEFAULT_IMG_URL = 'https://join.travelmanagers.com.au/wp-content/uploads/2017/09/default-placeholder-300x300.png'
-
 def parse_datetime(value: str) -> datetime | None:
 	if not value:
 		return None
@@ -44,12 +42,13 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 
 	opml_urls: List[str]
 	max_article_per_feed: int = 5
-	table_name: str = 'article'
+	articles_table_name: str = 'articles'
+	publishers_table_name: str = 'publishers'
 	db_username: str
 	db_password: str
 	db_host: str
 	db_port: str | int
-	db_db: str
+	db_name: str
 
 	@classmethod
 	def get_spec(cls) -> dg.ComponentTypeSpec:
@@ -65,7 +64,7 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 		@dg.asset(
 			kinds={'python'},
 			group_name='aggregation',
-			code_version='0.1.0',
+			code_version='0.2.0',
 			description="""
         Loads articles to database from RSS sources.
       """,
@@ -98,87 +97,81 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 
 			context.log.info(f"total rss feeds retrieved from OPML: {len(feeds)}")
 
-			with postgresql.get_connection() as conn:
-				with conn.cursor() as cur:
-					for feed_name, feed_url in feeds.items():
-						context.log.info(f"retrieving articles from: {feed_name}")
 
-						feed = feedparser.parse(feed_url)
+			for feed_name, feed_url in feeds.items():
+				context.log.info(f"retrieving articles from: {feed_name}")
 
-						publisher = feed.feed.get("title", "UNKNOWN").upper()
+				feed = feedparser.parse(feed_url)
+
+				with postgresql.get_connection() as conn:
+					with conn.cursor() as cur:
+						cur.execute(
+						  f"""
+						  INSERT INTO {self.publishers_table_name} (
+								name
+						  )
+						  VALUES (
+						    %(name)s
+						  )
+						  ON CONFLICT (name)
+							DO UPDATE SET name = EXCLUDED.name
+							RETURNING publisher_id
+						  """,
+						  {
+						    "name": feed_name,
+						  }
+						)
+						publisher_id = cur.fetchone()[0]
+
+						articles = []
+
 						for entry in feed.entries[:self.max_article_per_feed]:
 							title = entry.get("title")
 							original_url = entry.get("link")
 
 							if not title or not original_url:
 								continue
-
-							authors = ", ".join(
-								a.get("name") for a in entry.get("authors", [])
-								if "name" in a
-							) or None
-
+							
+							authors = [a.get("name") for a in entry.get("authors", [])]
 							description = (
 								entry.get("summary") or
 								entry.get("description")
 							)
+							published_at = parse_datetime(
+								entry.get("published") or entry.get("updated")
+							)
+							image_url = extract_image(entry)
 
-							content = None
-							if "content" in entry:
-								content = entry.content[0].value
-								image_url = extract_image(entry)
-								published_at = parse_datetime(
-									entry.get("published") or entry.get("updated")
-								)
-								created_at = datetime.now(timezone.utc)
+							articles.append((title, authors, description, publisher_id, published_at, original_url, image_url))
 
-								tag = publisher
+						cur.executemany(
+						  f"""
+						  INSERT INTO {self.articles_table_name} (
+								title,
+						    authors,
+						    description,
+								publisher_id,
+						    published_at,
+						    original_url,
+						    image_url
+						  )
+						  VALUES (
+						    %s,
+						    %s,
+						    %s,
+						    %s,
+						    %s,
+						    %s,
+						    %s
+						  )
+						  ON CONFLICT (original_url) DO NOTHING
+						  """,
+							articles,
+						)
 
-								cur.execute(
-								  f"""
-								  INSERT INTO {self.table_name} (
-								    authors,
-								    content,
-								    created_at,
-								    description,
-								    image_url,
-								    original_url,
-								    published_at,
-								    publishers,
-								    tag,
-								    title
-								  )
-								  VALUES (
-								    %(authors)s,
-								    %(content)s,
-								    %(created_at)s,
-								    %(description)s,
-								    %(image_url)s,
-								    %(original_url)s,
-								    %(published_at)s,
-								    %(publishers)s,
-								    %(tag)s,
-								    %(title)s
-								  )
-								  ON CONFLICT (original_url) DO NOTHING
-								  """,
-								  {
-								    "authors": authors or "unknown",
-								    "content": content or description,
-								    "created_at": created_at,
-								    "description": description,
-								    "image_url": image_url or DEFAULT_IMG_URL,
-								    "original_url": original_url,
-								    "published_at": published_at,
-								    "publishers": publisher,
-								    "tag": tag,
-								    "title": title,
-								  }
-								)
+					article_counter[feed_name] = len(articles)
 
-								article_counter[feed_name] += 1
-
-				conn.commit()
+					conn.commit()
 			
 			return dg.MaterializeResult(
 				metadata={
@@ -197,7 +190,7 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 					password=self.db_password,
 					host=self.db_host,
 					port=str(self.db_port),
-					db_name=self.db_db,
+					db_name=self.db_name,
 				),
 			},
 		)
