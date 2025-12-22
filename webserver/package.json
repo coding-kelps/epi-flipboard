@@ -6,7 +6,9 @@
     "dev": "bun --bun next dev",
     "build": "bun --bun next build",
     "start": "bun --bun next start",
-    "lint": "bun --bun eslint"
+    "lint": "bun --bun eslint",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
@@ -34,10 +36,13 @@
     "@types/probe-image-size": "^7.2.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^4.0.16",
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
+    "jsdom": "^27.3.0",
     "prisma": "^7.2.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.0.16"
   }
 }
