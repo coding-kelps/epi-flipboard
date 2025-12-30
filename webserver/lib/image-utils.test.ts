@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { checkImageResolution } from './image-utils'
+import { checkImageResolution } from '@/lib/image-utils'
 
 // Mock probe-image-size
 vi.mock('probe-image-size', () => {

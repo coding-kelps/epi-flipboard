@@ -1,4 +1,4 @@
-import { getPrisma } from "./prisma";
+import { getPrisma } from "@/lib/prisma";
 import { Prisma } from "../app/generated/prisma/client";
 
 export type Article = Prisma.ArticleGetPayload<{
