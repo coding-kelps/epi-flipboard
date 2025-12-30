@@ -1,4 +1,4 @@
-import { loadSecret } from "./env-secrets";
+import { loadSecret } from "@/lib/env-secrets";
 
 
 function requiredEnv(name: string): string {

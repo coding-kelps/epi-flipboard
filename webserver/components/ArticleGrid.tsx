@@ -1,5 +1,5 @@
 import { Article } from "@/lib/articles";
-import ArticleCard from "./ArticleCard";
+import ArticleCard from "@/components/ArticleCard";
 
 
 export default function ArticleGrid({ articles }: { articles: Article[] }) {
