@@ -1,31 +1,44 @@
 import { NextResponse } from 'next/server';
-import { getPrisma } from '@/lib/prisma'
+import { getPrismaIdentity, getPrismaContent } from '@/lib/prisma'
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
-  const prisma = getPrisma();
+  const prismaIdentity = getPrismaIdentity();
+  const prismaContent = getPrismaContent();
   const verbose = request.url.includes('verbose');
 
-  let dbStatus = 'unknown';
+  let identityDbStatus = 'unknown';
 
   try {
-    await prisma.$queryRaw`SELECT 1`;
-    dbStatus = 'ok';
+    await prismaIdentity.$queryRaw`SELECT 1`;
+    identityDbStatus = 'ok';
   } catch (err) {
-    dbStatus = 'fail';
+    identityDbStatus = 'fail';
   }
 
-  const isReady = dbStatus === 'ok';
+  let contentDbStatus = 'unknown';
+
+  try {
+    await prismaContent.$queryRaw`SELECT 1`;
+    contentDbStatus = 'ok';
+  } catch (err) {
+    contentDbStatus = 'fail';
+  }
+
+  const isReady = identityDbStatus === 'ok' && contentDbStatus === 'ok';
 
   const response = verbose
     ? {
-        status: isReady ? 'ready' : 'not ready',
-        checks: {
-          database: dbStatus,
-        },
-      }
+      status: isReady ? 'ready' : 'not ready',
+      checks: {
+        databases: {
+          identity: identityDbStatus,
+          content: contentDbStatus,
+        }
+      },
+    }
     : { status: isReady ? 'ready' : 'not ready' };
 
   return NextResponse.json(response, { status: isReady ? 200 : 503 });

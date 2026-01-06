@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display, UnifrakturMaguntia } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
-import NavBar from "@/components/NavBar";
+import NavBarContainer from "@/components/NavBarContainer";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/components/AuthProvider";
 
@@ -37,7 +37,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${playfair.variable} ${gothic.variable} font-sans antialiased bg-white text-gray-900`}>
         <AuthProvider>
           <Header />
-          <NavBar />
+          <NavBarContainer />
           <main className="min-h-screen">
             {children}
           </main>

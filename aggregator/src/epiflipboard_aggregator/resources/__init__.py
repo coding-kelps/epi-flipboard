@@ -1,1 +1,2 @@
-from .postgresql import PostgreSQLResource as PostgreSQLResource
+from .postgresql import PostgreSQLResource, PostgreSQLConfig
+from .sentence_transformer import SentenceTransformerResource, SentenceTransformerConfig

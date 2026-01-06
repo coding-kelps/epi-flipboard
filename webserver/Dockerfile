@@ -1,4 +1,4 @@
-FROM docker.io/oven/bun:1.3.4-slim AS base
+FROM docker.io/oven/bun:1.3.6-slim AS base
 
 FROM base AS deps
 
@@ -8,7 +8,7 @@ COPY package.json bun.lock ./
 
 RUN bun install --frozen-lockfile
 
-FROM docker.io/oven/bun:1.3.4-slim AS builder
+FROM docker.io/oven/bun:1.3.6-slim AS builder
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN bun run build
 
-FROM docker.io/oven/bun:1.3.4-distroless AS runner
+FROM docker.io/oven/bun:1.3.6-distroless AS runner
 
 LABEL org.opencontainers.image.authors="guilhem.sante@kelps.org"
 LABEL org.opencontainers.image.title="EpiFlipBoard Webserver"

@@ -5,10 +5,20 @@ import { Search, User as UserIcon } from "lucide-react";
 import { useState } from "react";
 import AuthModal from "@/components/AuthModal";
 import { useAuth } from "@/components/AuthProvider";
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const { user } = useAuth();
+    const [searchQuery, setSearchQuery] = useState("");
+    const router = useRouter();
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+        }
+    };
 
     const currentDate = new Date().toLocaleDateString("en-US", {
         weekday: "long",
@@ -23,9 +33,18 @@ export default function Header() {
             <div className="container mx-auto px-4 py-4 grid grid-cols-1 md:grid-cols-3 items-center relative gap-4 md:gap-0">
 
                 <div className="flex flex-col items-start gap-3 order-2 md:order-1">
-                    <button className="p-2 -ml-2 hover:bg-gray-100 rounded-full" aria-label="Search">
-                        <Search className="w-5 h-5" />
-                    </button>
+                    <form onSubmit={handleSearch} className="flex items-center gap-2">
+                        <div className="relative">
+                            <input
+                                type="text"
+                                placeholder="Search..."
+                                className="pl-8 pr-3 py-1 text-sm border border-gray-300 rounded-full focus:outline-none focus:border-gray-500 w-40 transition-all focus:w-60"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                            <Search className="w-4 h-4 absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                        </div>
+                    </form>
                     <div>
                         <div className="text-xs font-bold text-gray-700">{currentDate}</div>
                         <div className="hidden md:block text-xs text-gray-500">Today’s News</div>

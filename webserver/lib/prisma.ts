@@ -1,24 +1,46 @@
-import { PrismaClient } from '../app/generated/prisma/client'
+import { PrismaClient as PrismaClientIdentity } from '@/app/generated/prisma-identity/client'
+import { PrismaClient as PrismaClientContent } from '@/app/generated/prisma-content/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { getDatabaseUrl } from "@/lib/database-url";
 
 
-const globalForPrisma = global as unknown as {
-    prisma?: PrismaClient
+
+const globalForPrismaIdentity = global as unknown as {
+  prismaIdentity?: PrismaClientIdentity
 };
 
-export function getPrisma(): PrismaClient {
-  if (globalForPrisma.prisma) {
-    return globalForPrisma.prisma;
+export function getPrismaIdentity(): PrismaClientIdentity {
+  if (globalForPrismaIdentity.prismaIdentity) {
+    return globalForPrismaIdentity.prismaIdentity;
   }
 
   const adapter = new PrismaPg({
-    connectionString: getDatabaseUrl(),
+    connectionString: getDatabaseUrl("IDENTITY_DB"),
   });
 
-  const prisma = new PrismaClient({ adapter });
+  const prisma = new PrismaClientIdentity({ adapter });
 
-  if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+  if (process.env.NODE_ENV !== 'production') globalForPrismaIdentity.prismaIdentity = prisma;
+
+  return prisma;
+}
+
+const globalForPrismaContent = global as unknown as {
+  prismaContent?: PrismaClientContent
+};
+
+export function getPrismaContent(): PrismaClientContent {
+  if (globalForPrismaContent.prismaContent) {
+    return globalForPrismaContent.prismaContent;
+  }
+
+  const adapter = new PrismaPg({
+    connectionString: getDatabaseUrl("CONTENT_DB"),
+  });
+
+  const prisma = new PrismaClientContent({ adapter });
+
+  if (process.env.NODE_ENV !== 'production') globalForPrismaContent.prismaContent = prisma;
 
   return prisma;
 }

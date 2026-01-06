@@ -24,8 +24,8 @@ export default async function Home() {
   // Check top 10 articles for a high-res image
   for (let i = 0; i < Math.min(articles.length, 10); i++) {
     const article = articles[i];
-    if (article.imageUrl) {
-      const isHighRes = await checkImageResolution(article.imageUrl, 800);
+    if (article.image_url) {
+      const isHighRes = await checkImageResolution(article.image_url, 800);
       if (isHighRes) {
         leadStory = article;
         leadStoryIndex = i;
@@ -36,13 +36,13 @@ export default async function Home() {
 
   // Fallback if no high-res image found: just take the first one (or first with ANY image)
   if (!leadStory) {
-    leadStoryIndex = articles.findIndex(a => a.imageUrl);
+    leadStoryIndex = articles.findIndex(a => a.image_url);
     if (leadStoryIndex === -1) leadStoryIndex = 0; // Absolute fallback
     leadStory = articles[leadStoryIndex];
   }
 
   // Filter out the lead story from the rest of the list
-  const otherArticles = articles.filter((a) => a.id !== leadStory!.id);
+  const otherArticles = articles.filter((a) => a.article_id !== leadStory!.article_id);
 
   // Distribute remaining articles
   const secondaryLead = otherArticles[0];
@@ -62,7 +62,7 @@ export default async function Home() {
           </h4>
           <div className="flex flex-col gap-4">
             {sidebarStories.map((article) => (
-              <ArticleCard key={article.id} article={article} variant="compact" />
+              <ArticleCard key={String(article.article_id)} article={article} variant="compact" />
             ))}
           </div>
         </section>
@@ -83,7 +83,7 @@ export default async function Home() {
               <ArticleCard article={secondaryLead} variant="standard" />
             )}
             {topStories.map((article) => (
-              <ArticleCard key={article.id} article={article} variant="standard" />
+              <ArticleCard key={String(article.article_id)} article={article} variant="standard" />
             ))}
           </div>
 
@@ -97,7 +97,7 @@ export default async function Home() {
           </h4>
           <div className="flex flex-col gap-6">
             {opinionStories.map((article) => (
-              <ArticleCard key={article.id} article={article} variant="standard" />
+              <ArticleCard key={String(article.article_id)} article={article} variant="standard" />
             ))}
           </div>
         </section>
@@ -110,7 +110,7 @@ export default async function Home() {
           <h5 className="font-bold text-xs uppercase tracking-wider text-gray-900 mb-6">More News</h5>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
             {moreNews.map((article) => (
-              <ArticleCard key={article.id} article={article} variant="standard" />
+              <ArticleCard key={String(article.article_id)} article={article} variant="standard" />
             ))}
           </div>
         </section>

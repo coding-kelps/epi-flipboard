@@ -1,21 +1,31 @@
 type: epiflipboard_aggregator.components.article_aggregator.ArticleAggregatorComponent
 
 attributes:
-  opml_urls:
-    - https://raw.githubusercontent.com/plenaryapp/awesome-rss-feeds/refs/heads/master/countries/with_category/France.opml
-    - https://raw.githubusercontent.com/plenaryapp/awesome-rss-feeds/refs/heads/master/countries/with_category/United%20Kingdom.opml
-    - https://raw.githubusercontent.com/plenaryapp/awesome-rss-feeds/refs/heads/master/countries/with_category/United%20States.opml
-    - https://raw.githubusercontent.com/plenaryapp/awesome-rss-feeds/refs/heads/master/countries/with_category/Ireland.opml
-    - https://raw.githubusercontent.com/plenaryapp/awesome-rss-feeds/refs/heads/master/countries/with_category/Australia.opml
-    - https://raw.githubusercontent.com/plenaryapp/awesome-rss-feeds/refs/heads/master/countries/with_category/South%20Africa.opml
+  sources:
+    - name: France
+      opml_url: https://raw.githubusercontent.com/plenaryapp/awesome-rss-feeds/refs/heads/master/countries/with_category/France.opml
+    - name: United Kingdom
+      opml_url: https://raw.githubusercontent.com/plenaryapp/awesome-rss-feeds/refs/heads/master/countries/with_category/United%20Kingdom.opml
+    - name: United States
+      opml_url: https://raw.githubusercontent.com/plenaryapp/awesome-rss-feeds/refs/heads/master/countries/with_category/United%20States.opml
   max_article_per_feed: 5
-  articles_table_name: articles
-  publishers_table_name: publishers
-  db_username: "{{ env.POSTGRES_USER }}"
-  db_password: "{{ env.POSTGRES_PASSWORD }}"
-  db_host: "{{ env.POSTGRES_HOST }}"
-  db_port: "{{ env.POSTGRES_PORT }}"
-  db_name: "{{ env.POSTGRES_DB }}"
+  article_tag_similarity_threshold: 0.70
+  postgresql:
+    username: "{{ env.POSTGRES_USER }}"
+    password: "{{ env.POSTGRES_PASSWORD }}"
+    host: "{{ env.POSTGRES_HOST }}"
+    port: "{{ env.POSTGRES_PORT | int }}"
+    db_name: "{{ env.POSTGRES_DB }}"
+  qdrant:
+    host: "{{ env.QDRANT_HOST }}"
+    port: "{{ env.QDRANT_PORT | int }}"
+    https: true
+  sentence_transformer:
+    model_name: sentence-transformers/all-MiniLM-L6-v2
+    device: cpu
+  openai:
+    model_name: gpt-5-nano
+    api_key: "{{ env.OPENAI_API_KEY }}"
 
 requirements:
   env:
@@ -24,3 +34,6 @@ requirements:
     - POSTGRES_HOST
     - POSTGRES_PORT
     - POSTGRES_DB
+    - QDRANT_HOST
+    - QDRANT_PORT
+    - OPENAI_API_KEY
