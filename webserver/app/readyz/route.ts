@@ -33,8 +33,10 @@ export async function GET(request: Request) {
     ? {
       status: isReady ? 'ready' : 'not ready',
       checks: {
-        identityDb: identityDbStatus,
-        contentDb: contentDbStatus,
+        databases: {
+          identity: identityDbStatus,
+          content: contentDbStatus,
+        }
       },
     }
     : { status: isReady ? 'ready' : 'not ready' };

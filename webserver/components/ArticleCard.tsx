@@ -16,15 +16,9 @@ export default function ArticleCard({
   className,
 }: ArticleCardProps) {
   const hasImage = !!article.image_url;
-  const hasAuthors = article.authors && article.authors.length > 0;
-
-  // Format authors: "By Name", "By Name and Name"
-  const authorsText = hasAuthors
-    ? `By ${article.authors.join(" and ")}`
-    : null;
-
   // Publisher name
   const publisherName = article.publishers?.display_name || article.publishers?.name;
+  const publisherText = publisherName ? `By ${publisherName}` : null;
 
   if (variant === "lead") {
     return (
@@ -52,7 +46,7 @@ export default function ArticleCard({
             </p>
           )}
           <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-gray-500 mt-1 uppercase tracking-wider">
-            {authorsText && <span>{authorsText}</span>}
+            {publisherText && <span>{publisherText}</span>}
           </div>
         </div>
       </article>
@@ -66,8 +60,8 @@ export default function ArticleCard({
           <h3 className="text-sm md:text-md font-bold font-serif text-gray-900 leading-snug group-hover:text-gray-700">
             {article.title}
           </h3>
-          {authorsText && (
-            <span className="text-[10px] text-gray-500 uppercase tracking-widest">{authorsText}</span>
+          {publisherText && (
+            <span className="text-[10px] text-gray-500 uppercase tracking-widest">{publisherText}</span>
           )}
         </a>
       </article>
@@ -99,8 +93,7 @@ export default function ArticleCard({
         </p>
       )}
       <div className="text-xs text-gray-400 mt-1 flex items-center gap-2">
-        {authorsText && <span className="uppercase tracking-wider font-medium text-gray-500">{authorsText}</span>}
-        {/* <span>{publisherName}</span> */}
+        {publisherText && <span className="uppercase tracking-wider font-medium text-gray-500">{publisherText}</span>}
       </div>
     </article>
   );
