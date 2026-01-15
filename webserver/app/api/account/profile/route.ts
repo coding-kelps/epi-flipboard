@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrisma } from '@/lib/prisma';
+import { getPrismaIdentity } from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
 import { cookies } from 'next/headers';
 import { trace } from '@opentelemetry/api';
@@ -21,8 +21,8 @@ export async function GET(req: NextRequest) {
 
     span?.addEvent('user.profile_view', { userId: payload.userId });
 
-    const prisma = getPrisma();
-    const user = await prisma.user.findUnique({
+    const prismaIdentity = getPrismaIdentity();
+    const user = await prismaIdentity.user.findUnique({
         where: { id: payload.userId },
         select: {
             id: true,
@@ -58,8 +58,8 @@ export async function PUT(req: NextRequest) {
 
     span?.addEvent('user.profile_update', { userId: payload.userId, name });
 
-    const prisma = getPrisma();
-    const user = await prisma.user.update({
+    const prismaIdentity = getPrismaIdentity();
+    const user = await prismaIdentity.user.update({
         where: { id: payload.userId },
         data: { name },
         select: {

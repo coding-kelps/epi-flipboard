@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrisma } from '@/lib/prisma';
+import { getPrismaIdentity } from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
 import { cookies } from 'next/headers';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
@@ -30,8 +30,8 @@ export async function DELETE(req: NextRequest) {
         return NextResponse.json({ error: 'Confirmation email is required' }, { status: 400 });
     }
 
-    const prisma = getPrisma();
-    const user = await prisma.user.findUnique({
+    const prismaIdentity = getPrismaIdentity();
+    const user = await prismaIdentity.user.findUnique({
         where: { id: payload.userId },
     });
 
@@ -46,7 +46,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     try {
-        await prisma.user.delete({
+        await prismaIdentity.user.delete({
             where: { id: user.id },
         });
 

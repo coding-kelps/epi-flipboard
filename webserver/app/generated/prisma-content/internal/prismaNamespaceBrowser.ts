@@ -51,10 +51,10 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  User: 'User',
-  Article: 'Article',
-  Publisher: 'Publisher',
-  Tag: 'Tag'
+  article_tag: 'article_tag',
+  articles: 'articles',
+  publishers: 'publishers',
+  tags: 'tags'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -73,49 +73,46 @@ export const TransactionIsolationLevel = {
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const UserScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  email: 'email',
-  name: 'name',
-  password: 'password',
-  emailVerified: 'emailVerified'
+export const Article_tagScalarFieldEnum = {
+  article_id: 'article_id',
+  tag_id: 'tag_id'
 } as const
 
-export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+export type Article_tagScalarFieldEnum = (typeof Article_tagScalarFieldEnum)[keyof typeof Article_tagScalarFieldEnum]
 
 
-export const ArticleScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
+export const ArticlesScalarFieldEnum = {
+  article_id: 'article_id',
   title: 'title',
   description: 'description',
   authors: 'authors',
-  publishedAt: 'publishedAt',
-  originalUrl: 'originalUrl',
-  imageUrl: 'imageUrl',
-  publisherId: 'publisherId'
+  original_url: 'original_url',
+  image_url: 'image_url',
+  publisher_id: 'publisher_id',
+  published_at: 'published_at',
+  created_at: 'created_at'
 } as const
 
-export type ArticleScalarFieldEnum = (typeof ArticleScalarFieldEnum)[keyof typeof ArticleScalarFieldEnum]
+export type ArticlesScalarFieldEnum = (typeof ArticlesScalarFieldEnum)[keyof typeof ArticlesScalarFieldEnum]
 
 
-export const PublisherScalarFieldEnum = {
-  id: 'id',
+export const PublishersScalarFieldEnum = {
+  publisher_id: 'publisher_id',
   name: 'name',
-  displayName: 'displayName',
-  imageUrl: 'imageUrl'
+  display_name: 'display_name',
+  image_url: 'image_url'
 } as const
 
-export type PublisherScalarFieldEnum = (typeof PublisherScalarFieldEnum)[keyof typeof PublisherScalarFieldEnum]
+export type PublishersScalarFieldEnum = (typeof PublishersScalarFieldEnum)[keyof typeof PublishersScalarFieldEnum]
 
 
-export const TagScalarFieldEnum = {
-  id: 'id',
-  name: 'name'
+export const TagsScalarFieldEnum = {
+  tag_id: 'tag_id',
+  name: 'name',
+  created_at: 'created_at'
 } as const
 
-export type TagScalarFieldEnum = (typeof TagScalarFieldEnum)[keyof typeof TagScalarFieldEnum]
+export type TagsScalarFieldEnum = (typeof TagsScalarFieldEnum)[keyof typeof TagsScalarFieldEnum]
 
 
 export const SortOrder = {

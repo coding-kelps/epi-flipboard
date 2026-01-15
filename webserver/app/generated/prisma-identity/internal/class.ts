@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.2.0",
   "engineVersion": "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3",
   "activeProvider": "postgresql",
-  "inlineSchema": "generator client {\n  provider   = \"prisma-client\"\n  output     = \"../app/generated/prisma\"\n  engineType = \"client\"\n  runtime    = \"bun\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id            Int      @id @default(autoincrement()) @map(\"user_id\")\n  createdAt     DateTime @default(now()) @map(\"created_at\")\n  email         String   @unique\n  name          String?\n  password      String\n  emailVerified Boolean  @map(\"email_verified\")\n\n  @@map(\"users\")\n}\n\nmodel Article {\n  id          Int       @id @default(autoincrement()) @map(\"article_id\")\n  createdAt   DateTime  @default(now()) @map(\"created_at\")\n  title       String\n  description String\n  authors     String[]\n  publishedAt DateTime  @map(\"published_at\")\n  originalUrl String    @unique @map(\"original_url\")\n  imageUrl    String?   @map(\"image_url\")\n  publisher   Publisher @relation(fields: [publisherId], references: [id])\n  publisherId Int       @map(\"publisher_id\")\n  tags        Tag[]     @relation(\"article_tags\")\n\n  @@map(\"articles\")\n}\n\nmodel Publisher {\n  id          Int       @id @default(autoincrement()) @map(\"publisher_id\")\n  name        String    @unique\n  displayName String?   @map(\"display_name\")\n  imageUrl    String?   @map(\"image_url\")\n  articles    Article[]\n\n  @@map(\"publishers\")\n}\n\nmodel Tag {\n  id       Int       @id @default(autoincrement()) @map(\"tag_id\")\n  name     String    @unique\n  articles Article[] @relation(\"article_tags\")\n\n  @@map(\"tags\")\n}\n",
+  "inlineSchema": "generator client {\n  provider   = \"prisma-client\"\n  output     = \"../../app/generated/prisma-identity\"\n  engineType = \"client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id            Int      @id @default(autoincrement()) @map(\"user_id\")\n  createdAt     DateTime @default(now()) @map(\"created_at\")\n  email         String   @unique\n  name          String?\n  password      String\n  emailVerified Boolean  @map(\"email_verified\")\n\n  @@map(\"users\")\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -28,7 +28,7 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"user_id\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emailVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\",\"dbName\":\"email_verified\"}],\"dbName\":\"users\"},\"Article\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"article_id\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"authors\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"publishedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"published_at\"},{\"name\":\"originalUrl\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"original_url\"},{\"name\":\"imageUrl\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"image_url\"},{\"name\":\"publisher\",\"kind\":\"object\",\"type\":\"Publisher\",\"relationName\":\"ArticleToPublisher\"},{\"name\":\"publisherId\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"publisher_id\"},{\"name\":\"tags\",\"kind\":\"object\",\"type\":\"Tag\",\"relationName\":\"article_tags\"}],\"dbName\":\"articles\"},\"Publisher\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"publisher_id\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"displayName\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"display_name\"},{\"name\":\"imageUrl\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"image_url\"},{\"name\":\"articles\",\"kind\":\"object\",\"type\":\"Article\",\"relationName\":\"ArticleToPublisher\"}],\"dbName\":\"publishers\"},\"Tag\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"tag_id\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"articles\",\"kind\":\"object\",\"type\":\"Article\",\"relationName\":\"article_tags\"}],\"dbName\":\"tags\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"user_id\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emailVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\",\"dbName\":\"email_verified\"}],\"dbName\":\"users\"}},\"enums\":{},\"types\":{}}")
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
   const { Buffer } = await import('node:buffer')
@@ -183,36 +183,6 @@ export interface PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, { omit: OmitOpts }>;
-
-  /**
-   * `prisma.article`: Exposes CRUD operations for the **Article** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Articles
-    * const articles = await prisma.article.findMany()
-    * ```
-    */
-  get article(): Prisma.ArticleDelegate<ExtArgs, { omit: OmitOpts }>;
-
-  /**
-   * `prisma.publisher`: Exposes CRUD operations for the **Publisher** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Publishers
-    * const publishers = await prisma.publisher.findMany()
-    * ```
-    */
-  get publisher(): Prisma.PublisherDelegate<ExtArgs, { omit: OmitOpts }>;
-
-  /**
-   * `prisma.tag`: Exposes CRUD operations for the **Tag** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Tags
-    * const tags = await prisma.tag.findMany()
-    * ```
-    */
-  get tag(): Prisma.TagDelegate<ExtArgs, { omit: OmitOpts }>;
 }
 
 export function getPrismaClientClass(): PrismaClientConstructor {

@@ -1,0 +1,51 @@
+generator client {
+  provider   = "prisma-client"
+  output     = "../../app/generated/prisma-content"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model article_tag {
+  article_id BigInt
+  tag_id     BigInt
+  articles   articles @relation(fields: [article_id], references: [article_id], onDelete: Cascade, onUpdate: NoAction)
+  tags       tags     @relation(fields: [tag_id], references: [tag_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([article_id, tag_id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model articles {
+  article_id   BigInt        @id @default(autoincrement())
+  title        String
+  description  String?
+  authors      String[]
+  original_url String?       @unique
+  image_url    String?
+  publisher_id BigInt
+  published_at DateTime      @db.Timestamptz(6)
+  created_at   DateTime      @default(now()) @db.Timestamptz(6)
+  article_tag  article_tag[]
+  publishers   publishers    @relation(fields: [publisher_id], references: [publisher_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model publishers {
+  publisher_id BigInt     @id @default(autoincrement())
+  name         String     @unique
+  display_name String?    @unique
+  image_url    String?
+  articles     articles[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tags {
+  tag_id      BigInt        @id @default(autoincrement())
+  name        String        @unique
+  created_at  DateTime      @default(now()) @db.Timestamptz(6)
+  article_tag article_tag[]
+}

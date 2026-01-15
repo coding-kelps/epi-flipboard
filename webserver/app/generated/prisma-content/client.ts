@@ -29,8 +29,8 @@ export * from "./enums"
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * // Fetch zero or more Article_tags
+ * const article_tags = await prisma.article_tag.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -40,22 +40,22 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model User
- * 
+ * Model article_tag
+ * This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
  */
-export type User = Prisma.UserModel
+export type article_tag = Prisma.article_tagModel
 /**
- * Model Article
- * 
+ * Model articles
+ * This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
  */
-export type Article = Prisma.ArticleModel
+export type articles = Prisma.articlesModel
 /**
- * Model Publisher
- * 
+ * Model publishers
+ * This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
  */
-export type Publisher = Prisma.PublisherModel
+export type publishers = Prisma.publishersModel
 /**
- * Model Tag
- * 
+ * Model tags
+ * This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
  */
-export type Tag = Prisma.TagModel
+export type tags = Prisma.tagsModel

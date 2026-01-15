@@ -22,18 +22,3 @@ export * from './enums';
  * 
  */
 export type User = Prisma.UserModel
-/**
- * Model Article
- * 
- */
-export type Article = Prisma.ArticleModel
-/**
- * Model Publisher
- * 
- */
-export type Publisher = Prisma.PublisherModel
-/**
- * Model Tag
- * 
- */
-export type Tag = Prisma.TagModel

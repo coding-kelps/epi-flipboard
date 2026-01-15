@@ -1,4 +1,4 @@
-import { loadSecret } from "@/lib/env-secrets";
+import { loadSecret } from "./env-secrets";
 
 
 function requiredEnv(name: string): string {
@@ -9,13 +9,13 @@ function requiredEnv(name: string): string {
   return value;
 }
 
-function buildDatabaseUrl(): string {
-  const host = requiredEnv("DB_HOST");
-  const port = process.env.DB_PORT ?? "5432";
-  const database = requiredEnv("DB_NAME");
+function buildDatabaseUrl(prefix: string): string {
+  const host = requiredEnv(`${prefix}_HOST`);
+  const port = process.env[`${prefix}_PORT`] ?? "5432";
+  const database = requiredEnv(`${prefix}_NAME`);
 
-  const username = loadSecret({ name: "DB_USER", required: true })!;
-  const password = loadSecret({ name: "DB_PASSWORD", required: true })!;
+  const username = loadSecret({ name: `${prefix}_USER`, required: true })!;
+  const password = loadSecret({ name: `${prefix}_PASSWORD`, required: true })!;
 
   const sslMode = process.env.DB_SSL_MODE;
 
@@ -36,10 +36,10 @@ function buildDatabaseUrl(): string {
 
 let cachedDatabaseUrl: string | null = null;
 
-export function getDatabaseUrl(): string {
+export function getDatabaseUrl(prefix: string): string {
   if (cachedDatabaseUrl) return cachedDatabaseUrl;
 
-  cachedDatabaseUrl = process.env.DATABASE_URL ?? buildDatabaseUrl();
+  cachedDatabaseUrl = buildDatabaseUrl(prefix);
 
   return cachedDatabaseUrl;
 }

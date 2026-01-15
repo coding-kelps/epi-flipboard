@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrisma } from '@/lib/prisma';
+import { getPrismaIdentity } from '@/lib/prisma';
 import { comparePassword, signToken } from '@/lib/auth';
 import { cookies } from 'next/headers';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const { email, password } = body;
-        const prisma = getPrisma();
+        const prismaIdentity = getPrismaIdentity();
 
         span?.addEvent('user.login_attempt', { email });
 
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await prismaIdentity.user.findUnique({
             where: { email },
         });
 

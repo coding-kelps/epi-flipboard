@@ -1,20 +1,20 @@
-import { getPrisma } from "@/lib/prisma";
-import { Prisma } from "../app/generated/prisma/client";
+import { getPrismaContent } from "@/lib/prisma";
+import { Prisma } from "@/app/generated/prisma-content/client";
 
-export type Article = Prisma.ArticleGetPayload<{
-  include: { publisher: true; tags: true };
+export type Article = Prisma.articlesGetPayload<{
+  include: { publishers: true; article_tag: true };
 }>;
 
 export async function getArticles(): Promise<Article[]> {
-  const prisma = getPrisma();
+  const prismaContent = getPrismaContent();
   try {
-    const articles = await prisma.article.findMany({
+    const articles = await prismaContent.articles.findMany({
       include: {
-        publisher: true,
-        tags: true,
+        publishers: true,
+        article_tag: true,
       },
       orderBy: {
-        publishedAt: "desc",
+        published_at: "desc",
       },
       take: 25,
     });
