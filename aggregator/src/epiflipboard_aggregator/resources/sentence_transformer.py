@@ -9,13 +9,6 @@ class SentenceTransformerConfig(dg.Config):
   model_name: str = Field(
     description='Name of a model from the Hugging Face Hub.',
   )
-  device: str = Field(
-    default="cpu",
-    description="""
-      Device (like "cuda", "cpu", "mps", "npu") that should be used for computation.
-      If None, checks if a GPU can be used.
-    """,
-  )
 
 class SentenceTransformerResource(dg.ConfigurableResource):
   """
@@ -33,7 +26,7 @@ class SentenceTransformerResource(dg.ConfigurableResource):
     """Initialize the model when the resource is used."""
     self._model = SentenceTransformer(
       self.config.model_name,
-      device=self.config.device,
+      device='cpu',
     )
 
   def get_sentence_embedding_dimension(self) -> int | None:

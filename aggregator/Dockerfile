@@ -1,8 +1,8 @@
-FROM docker.io/library/python:3.13.7-slim AS builder
+FROM docker.io/library/python:3.13.11-slim AS builder
 
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=0
 
-COPY --from=ghcr.io/astral-sh/uv:0.9.17 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.9.26 /uv /uvx /bin/
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ COPY . /app
 
 RUN uv sync --no-dev --locked
 
-FROM docker.io/library/python:3.13.7-slim AS runner
+FROM docker.io/library/python:3.13.11-slim AS runner
 
 LABEL org.opencontainers.image.authors="guilhem.sante@kelps.org"
 LABEL org.opencontainers.image.title="EpiFlipBoard Aggregator User Code"

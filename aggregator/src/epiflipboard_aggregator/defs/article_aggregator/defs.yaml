@@ -22,7 +22,6 @@ attributes:
     https: true
   sentence_transformer:
     model_name: sentence-transformers/all-MiniLM-L6-v2
-    device: cpu
   openai:
     model_name: gpt-5-nano
     api_key: "{{ env.OPENAI_API_KEY }}"
