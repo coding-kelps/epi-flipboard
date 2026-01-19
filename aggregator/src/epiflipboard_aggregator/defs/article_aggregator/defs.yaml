@@ -24,7 +24,7 @@ attributes:
   qdrant:
     host: "{{ env.QDRANT_HOST }}"
     port: "{{ env.QDRANT_PORT | int }}"
-    https: true
+    https: false
   sentence_transformer:
     model_name: sentence-transformers/all-MiniLM-L6-v2
   openai:
