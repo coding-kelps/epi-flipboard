@@ -1,8 +1,8 @@
 import dagster as dg
 from pydantic import Field
 from typing import Annotated, Dict, List, NamedTuple
+from dagster_aws.s3 import S3Resource
 from dagster_qdrant import QdrantConfig as QdrantResourceConfig
-
 
 from epiflipboard_aggregator.resources import (
 	PostgreSQLConfig as PostgreSQLResourceConfig,
@@ -51,6 +51,36 @@ def resolve_sources(context: dg.ResolutionContext, source_configs: List[SourceCo
 	return sources
 
 Sources = Annotated[Dict[str, SourceProperties], dg.Resolver(resolve_sources, model_field_type=List[SourceConfig])]
+
+class S3Config(S3Resource, dg.Resolvable):
+	aws_access_key_id: StringOrFile | None = Field(
+		description='Access Key ID to access bucket',
+		default=None,
+	)
+	aws_secret_access_key: StringOrFile | None = Field(
+		description='Access Key Secret to access bucket',
+		default=None,
+	)
+	aws_session_token: StringOrFile | None = Field(
+		description='Session token to access bucket',
+		default=None,
+	)
+
+class S3IOManagerConfig(dg.Config, dg.Resolvable):
+	"""
+	S3Config defines the Dagster S3 I/O Manager configuration.
+	"""
+	bucket: str = Field(
+		description='Name of the S3 bucket.'
+	)
+	prefix: str = Field(
+		description='Filepath prefix of the stored artifacts in the S3 buckets by the I/O Manager',
+		default='dagster',
+	)
+	s3: S3Config = Field(
+		description='Properties of the S3 bucket connection',
+	)
+
 
 class PostgreSQLConfig(PostgreSQLResourceConfig, dg.Resolvable):
 	username: StringOrFile = Field(

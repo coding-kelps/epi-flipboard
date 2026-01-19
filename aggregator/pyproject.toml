@@ -9,6 +9,7 @@ readme = "README.md"
 requires-python = "==3.13.*"
 dependencies = [
     "dagster>=1.12.8",
+    "dagster-aws>=0.28.8",
     "dagster-docker>=0.28.8",
     "dagster-openai>=0.28.8",
     "dagster-postgres>=0.28.8",
