@@ -1,0 +1,20 @@
+generator client {
+  provider   = "prisma-client"
+  output     = "../../app/generated/prisma-activity"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Feed {
+  id          Int      @id @default(autoincrement()) @map("feed_id")
+  name        String   @unique
+  description String?
+  tagIds      BigInt[]    @map("tag_ids")
+  userId      Int      @map("user_id")
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+
+  @@map("feeds")
+}

@@ -34,12 +34,15 @@ function buildDatabaseUrl(prefix: string): string {
   return `postgresql://${credentials}@${host}:${port}/${database}${querySuffix}`;
 }
 
-let cachedDatabaseUrl: string | null = null;
+const urlCache = new Map<string, string>();
 
 export function getDatabaseUrl(prefix: string): string {
-  if (cachedDatabaseUrl) return cachedDatabaseUrl;
+  if (urlCache.has(prefix)) {
+    return urlCache.get(prefix)!;
+  }
 
-  cachedDatabaseUrl = buildDatabaseUrl(prefix);
+  const url = buildDatabaseUrl(prefix);
+  urlCache.set(prefix, url);
 
-  return cachedDatabaseUrl;
+  return url;
 }

@@ -62,10 +62,16 @@ export default function Header() {
 
                 <div className="flex items-center gap-4 order-3 justify-center md:justify-end">
                     {user ? (
-                        <Link href="/profile" className="flex items-center gap-2 text-sm font-medium text-gray-900 hover:text-gray-700">
-                            <UserIcon className="w-5 h-5" />
-                            {user.name || 'Profile'}
-                        </Link>
+                        <>
+                            <Link href="/profile" className="flex items-center gap-2 text-sm font-medium text-gray-900 hover:text-gray-700">
+                                <UserIcon className="w-5 h-5" />
+                                {user.name || 'Profile'}
+                            </Link>
+                            <Link href="/feeds" className="text-sm font-medium text-gray-900 hover:text-gray-700">
+                                My Feeds
+                            </Link>
+                        </>
+
                     ) : (
                         <button
                             onClick={() => setIsAuthModalOpen(true)}
