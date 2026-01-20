@@ -8,11 +8,11 @@ attributes:
       aws_secret_access_key: "{{ env.S3_ACCESS_SECRET_KEY }}"
   sources:
     - name: France
-      opml_url: https://raw.githubusercontent.com/plenaryapp/awesome-rss-feeds/refs/heads/master/countries/with_category/France.opml
+      opml_url: https://raw.githubusercontent.com/coding-kelps/epi-flipboard/refs/heads/master/aggregator/sources/france.opml
     - name: United Kingdom
-      opml_url: https://raw.githubusercontent.com/plenaryapp/awesome-rss-feeds/refs/heads/master/countries/with_category/United%20Kingdom.opml
+      opml_url: https://raw.githubusercontent.com/coding-kelps/epi-flipboard/refs/heads/master/aggregator/sources/united-kingdom.opml
     - name: United States
-      opml_url: https://raw.githubusercontent.com/plenaryapp/awesome-rss-feeds/refs/heads/master/countries/with_category/United%20States.opml
+      opml_url: https://raw.githubusercontent.com/coding-kelps/epi-flipboard/refs/heads/master/aggregator/sources/united-states.opml
   max_article_per_feed: 5
   article_tag_similarity_threshold: 0.70
   postgresql:
