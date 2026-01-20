@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
     return (
         <footer className="border-t border-gray-200 mt-12 py-8 bg-gray-50">
@@ -7,9 +9,9 @@ export default function Footer() {
                     &copy; {new Date().getFullYear()} Epi FlipBoard. All rights reserved.
                 </div>
                 <div className="flex gap-4 text-xs text-gray-400">
-                    <a href="#" className="hover:underline">Privacy Policy</a>
-                    <a href="#" className="hover:underline">Terms of Service</a>
-                    <a href="#" className="hover:underline">Contact Us</a>
+                    <Link href="/privacy" className="hover:underline">Privacy Policy</Link>
+                    <Link href="/terms" className="hover:underline">Terms of Service</Link>
+                    <Link href="/about" className="hover:underline">About</Link>
                 </div>
             </div>
         </footer>

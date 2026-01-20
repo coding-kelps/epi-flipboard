@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import NavBarContainer from "@/components/NavBarContainer";
 import Footer from "@/components/Footer";
+import CookieConsent from "@/components/CookieConsent";
 import { AuthProvider } from "@/components/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -42,6 +43,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <CookieConsent />
         </AuthProvider>
       </body>
     </html>
