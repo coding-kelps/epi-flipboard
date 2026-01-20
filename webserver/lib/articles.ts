@@ -18,7 +18,7 @@ export async function getArticles(): Promise<Article[]> {
       orderBy: {
         published_at: "desc",
       },
-      take: 25,
+      take: 50,
     });
     return articles;
   } catch (error) {
@@ -57,7 +57,7 @@ export async function searchArticles(query: string): Promise<Article[]> {
         orderBy: {
           published_at: "desc",
         },
-        take: 25,
+        take: 50,
       });
       span.setAttribute('search.results_count', articles.length);
       return articles;

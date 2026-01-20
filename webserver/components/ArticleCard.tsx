@@ -55,7 +55,7 @@ export default function ArticleCard({
 
   if (variant === "compact") {
     return (
-      <article className={cn("py-3 border-b border-gray-200 last:border-0 group", className)}>
+      <article className={cn("py-3 border-b border-gray-200 last:border-0 last:pb-0 group", className)}>
         <a href={article.original_url || '#'} target="_blank" rel="noopener noreferrer" className="flex flex-col gap-1">
           <h3 className="text-sm md:text-md font-bold font-serif text-gray-900 leading-snug group-hover:text-gray-700">
             {article.title}

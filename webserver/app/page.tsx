@@ -44,12 +44,34 @@ export default async function Home() {
   // Filter out the lead story from the rest of the list
   const otherArticles = articles.filter((a) => a.article_id !== leadStory!.article_id);
 
-  // Distribute remaining articles
+  // Separate articles with and without images
+  const articlesWithImages = otherArticles.filter((a) => a.image_url);
+  const articlesWithoutImages = otherArticles.filter((a) => !a.image_url);
+
+  // Distribute remaining articles - prioritize articles with images for visual sections
   const secondaryLead = otherArticles[0];
-  const topStories = otherArticles.slice(1, 5);
-  const sidebarStories = otherArticles.slice(5, 17);
-  const opinionStories = otherArticles.slice(17, 22);
-  const moreNews = otherArticles.slice(22);
+
+  // topStories: Get 3 articles with images (after secondary lead)
+  const topStories = articlesWithImages.slice(1, 4);
+
+  // "The Latest" section: 13 articles (can be mixed)
+  const sidebarStories = otherArticles.slice(4, 17);
+
+  // opinionStories: Get 3 articles with images (from remaining articles with images)
+  const opinionStories = articlesWithImages.slice(4, 7);
+
+  // "More News" section: min/max 4 articles with images (from remaining articles)
+  const usedIds = new Set([
+    leadStory!.article_id,
+    secondaryLead?.article_id,
+    ...topStories.map(a => a.article_id),
+    ...sidebarStories.map(a => a.article_id),
+    ...opinionStories.map(a => a.article_id),
+  ].filter(Boolean));
+
+  const moreNews = articlesWithImages
+    .filter(a => !usedIds.has(a.article_id))
+    .slice(0, 4);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -95,7 +117,7 @@ export default async function Home() {
           <h4 className="font-bold text-xs uppercase tracking-wider text-gray-900 mb-2 border-t border-black pt-1">
             Opinion & Features
           </h4>
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-7">
             {opinionStories.map((article) => (
               <ArticleCard key={String(article.article_id)} article={article} variant="standard" />
             ))}
