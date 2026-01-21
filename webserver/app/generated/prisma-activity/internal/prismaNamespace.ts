@@ -522,6 +522,7 @@ export const FeedScalarFieldEnum = {
   name: 'name',
   description: 'description',
   tagIds: 'tagIds',
+  publisherIds: 'publisherIds',
   userId: 'userId',
   createdAt: 'createdAt'
 } as const

@@ -43,6 +43,7 @@ export default async function FeedsPage() {
     const serializedFeeds = feeds.map(feed => ({
         ...feed,
         tagIds: feed.tagIds.map(id => Number(id)),
+        publisherIds: feed.publisherIds.map(id => Number(id)),
         userId: Number(feed.userId),
         createdAt: feed.createdAt.toISOString(),
     }));
