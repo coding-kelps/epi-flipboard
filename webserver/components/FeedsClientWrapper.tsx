@@ -11,6 +11,7 @@ interface Feed {
     name: string;
     description: string | null;
     tagIds: number[];
+    publisherIds: number[];
     tags?: Tag[]; // Assuming we might pass this later, or map it
     userId: number;
     createdAt: string; // Serialized Date
@@ -36,7 +37,8 @@ export default function FeedsClientWrapper({ initialFeeds }: { initialFeeds: Fee
             name: feed.name,
             description: feed.description || '',
             tagIds: feed.tagIds,
-            tags: []
+            tags: [],
+            publisherIds: feed.publisherIds || [], // Handle potential missing field if old data (though DB migration handles it)
         });
         setIsCreateModalOpen(true);
     };

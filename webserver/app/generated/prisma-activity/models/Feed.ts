@@ -29,12 +29,14 @@ export type AggregateFeed = {
 export type FeedAvgAggregateOutputType = {
   id: number | null
   tagIds: number | null
+  publisherIds: number | null
   userId: number | null
 }
 
 export type FeedSumAggregateOutputType = {
   id: number | null
   tagIds: bigint[]
+  publisherIds: bigint[]
   userId: number | null
 }
 
@@ -59,6 +61,7 @@ export type FeedCountAggregateOutputType = {
   name: number
   description: number
   tagIds: number
+  publisherIds: number
   userId: number
   createdAt: number
   _all: number
@@ -68,12 +71,14 @@ export type FeedCountAggregateOutputType = {
 export type FeedAvgAggregateInputType = {
   id?: true
   tagIds?: true
+  publisherIds?: true
   userId?: true
 }
 
 export type FeedSumAggregateInputType = {
   id?: true
   tagIds?: true
+  publisherIds?: true
   userId?: true
 }
 
@@ -98,6 +103,7 @@ export type FeedCountAggregateInputType = {
   name?: true
   description?: true
   tagIds?: true
+  publisherIds?: true
   userId?: true
   createdAt?: true
   _all?: true
@@ -194,6 +200,7 @@ export type FeedGroupByOutputType = {
   name: string
   description: string | null
   tagIds: bigint[]
+  publisherIds: bigint[]
   userId: number
   createdAt: Date
   _count: FeedCountAggregateOutputType | null
@@ -226,6 +233,7 @@ export type FeedWhereInput = {
   name?: Prisma.StringFilter<"Feed"> | string
   description?: Prisma.StringNullableFilter<"Feed"> | string | null
   tagIds?: Prisma.BigIntNullableListFilter<"Feed">
+  publisherIds?: Prisma.BigIntNullableListFilter<"Feed">
   userId?: Prisma.IntFilter<"Feed"> | number
   createdAt?: Prisma.DateTimeFilter<"Feed"> | Date | string
 }
@@ -235,6 +243,7 @@ export type FeedOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   tagIds?: Prisma.SortOrder
+  publisherIds?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -247,6 +256,7 @@ export type FeedWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.FeedWhereInput | Prisma.FeedWhereInput[]
   description?: Prisma.StringNullableFilter<"Feed"> | string | null
   tagIds?: Prisma.BigIntNullableListFilter<"Feed">
+  publisherIds?: Prisma.BigIntNullableListFilter<"Feed">
   userId?: Prisma.IntFilter<"Feed"> | number
   createdAt?: Prisma.DateTimeFilter<"Feed"> | Date | string
 }, "id" | "name">
@@ -256,6 +266,7 @@ export type FeedOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   tagIds?: Prisma.SortOrder
+  publisherIds?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.FeedCountOrderByAggregateInput
@@ -273,6 +284,7 @@ export type FeedScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Feed"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Feed"> | string | null
   tagIds?: Prisma.BigIntNullableListFilter<"Feed">
+  publisherIds?: Prisma.BigIntNullableListFilter<"Feed">
   userId?: Prisma.IntWithAggregatesFilter<"Feed"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Feed"> | Date | string
 }
@@ -281,6 +293,7 @@ export type FeedCreateInput = {
   name: string
   description?: string | null
   tagIds?: Prisma.FeedCreatetagIdsInput | bigint[] | number[]
+  publisherIds?: Prisma.FeedCreatepublisherIdsInput | bigint[] | number[]
   userId: number
   createdAt?: Date | string
 }
@@ -290,6 +303,7 @@ export type FeedUncheckedCreateInput = {
   name: string
   description?: string | null
   tagIds?: Prisma.FeedCreatetagIdsInput | bigint[] | number[]
+  publisherIds?: Prisma.FeedCreatepublisherIdsInput | bigint[] | number[]
   userId: number
   createdAt?: Date | string
 }
@@ -298,6 +312,7 @@ export type FeedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tagIds?: Prisma.FeedUpdatetagIdsInput | bigint[] | number[]
+  publisherIds?: Prisma.FeedUpdatepublisherIdsInput | bigint[] | number[]
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -307,6 +322,7 @@ export type FeedUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tagIds?: Prisma.FeedUpdatetagIdsInput | bigint[] | number[]
+  publisherIds?: Prisma.FeedUpdatepublisherIdsInput | bigint[] | number[]
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -316,6 +332,7 @@ export type FeedCreateManyInput = {
   name: string
   description?: string | null
   tagIds?: Prisma.FeedCreatetagIdsInput | bigint[] | number[]
+  publisherIds?: Prisma.FeedCreatepublisherIdsInput | bigint[] | number[]
   userId: number
   createdAt?: Date | string
 }
@@ -324,6 +341,7 @@ export type FeedUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tagIds?: Prisma.FeedUpdatetagIdsInput | bigint[] | number[]
+  publisherIds?: Prisma.FeedUpdatepublisherIdsInput | bigint[] | number[]
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -333,6 +351,7 @@ export type FeedUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tagIds?: Prisma.FeedUpdatetagIdsInput | bigint[] | number[]
+  publisherIds?: Prisma.FeedUpdatepublisherIdsInput | bigint[] | number[]
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -350,6 +369,7 @@ export type FeedCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   tagIds?: Prisma.SortOrder
+  publisherIds?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -357,6 +377,7 @@ export type FeedCountOrderByAggregateInput = {
 export type FeedAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tagIds?: Prisma.SortOrder
+  publisherIds?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -379,10 +400,15 @@ export type FeedMinOrderByAggregateInput = {
 export type FeedSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tagIds?: Prisma.SortOrder
+  publisherIds?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
 export type FeedCreatetagIdsInput = {
+  set: bigint[] | number[]
+}
+
+export type FeedCreatepublisherIdsInput = {
   set: bigint[] | number[]
 }
 
@@ -395,6 +421,11 @@ export type NullableStringFieldUpdateOperationsInput = {
 }
 
 export type FeedUpdatetagIdsInput = {
+  set?: bigint[] | number[]
+  push?: bigint | number | bigint[] | number[]
+}
+
+export type FeedUpdatepublisherIdsInput = {
   set?: bigint[] | number[]
   push?: bigint | number | bigint[] | number[]
 }
@@ -418,6 +449,7 @@ export type FeedSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   name?: boolean
   description?: boolean
   tagIds?: boolean
+  publisherIds?: boolean
   userId?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["feed"]>
@@ -427,6 +459,7 @@ export type FeedSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   name?: boolean
   description?: boolean
   tagIds?: boolean
+  publisherIds?: boolean
   userId?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["feed"]>
@@ -436,6 +469,7 @@ export type FeedSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   name?: boolean
   description?: boolean
   tagIds?: boolean
+  publisherIds?: boolean
   userId?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["feed"]>
@@ -445,11 +479,12 @@ export type FeedSelectScalar = {
   name?: boolean
   description?: boolean
   tagIds?: boolean
+  publisherIds?: boolean
   userId?: boolean
   createdAt?: boolean
 }
 
-export type FeedOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "tagIds" | "userId" | "createdAt", ExtArgs["result"]["feed"]>
+export type FeedOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "tagIds" | "publisherIds" | "userId" | "createdAt", ExtArgs["result"]["feed"]>
 
 export type $FeedPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Feed"
@@ -459,6 +494,7 @@ export type $FeedPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     name: string
     description: string | null
     tagIds: bigint[]
+    publisherIds: bigint[]
     userId: number
     createdAt: Date
   }, ExtArgs["result"]["feed"]>
@@ -888,6 +924,7 @@ export interface FeedFieldRefs {
   readonly name: Prisma.FieldRef<"Feed", 'String'>
   readonly description: Prisma.FieldRef<"Feed", 'String'>
   readonly tagIds: Prisma.FieldRef<"Feed", 'BigInt[]'>
+  readonly publisherIds: Prisma.FieldRef<"Feed", 'BigInt[]'>
   readonly userId: Prisma.FieldRef<"Feed", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Feed", 'DateTime'>
 }

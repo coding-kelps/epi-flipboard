@@ -75,18 +75,27 @@ export async function searchArticles(query: string): Promise<Article[]> {
   });
 }
 
-export async function getArticlesByTags(tagIds: bigint[]): Promise<Article[]> {
+export async function getArticlesByTags(tagIds: bigint[], publisherIds: bigint[] = []): Promise<Article[]> {
   const prismaContent = getPrismaContent();
   try {
     const articles = await prismaContent.articles.findMany({
       where: {
-        article_tag: {
-          some: {
-            tag_id: {
-              in: tagIds,
+        AND: [
+          tagIds.length > 0 ? {
+            article_tag: {
+              some: {
+                tag_id: {
+                  in: tagIds,
+                },
+              },
             },
-          },
-        },
+          } : {},
+          publisherIds.length > 0 ? {
+            publisher_id: {
+              in: publisherIds
+            }
+          } : {}
+        ]
       },
       include: {
         publishers: true,

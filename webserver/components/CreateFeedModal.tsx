@@ -9,6 +9,11 @@ export interface Tag {
     name: string;
 }
 
+export interface Publisher {
+    publisher_id: string;
+    name: string;
+}
+
 
 export interface FeedData {
     id?: number;
@@ -16,6 +21,8 @@ export interface FeedData {
     description: string;
     tagIds: number[];
     tags?: Tag[]; // Helper for UI display if available
+    publisherIds?: number[];
+    publishers?: Publisher[];
 }
 
 interface CreateFeedModalProps {
@@ -30,6 +37,10 @@ export default function CreateFeedModal({ isOpen, onClose, initialData }: Create
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
     const [tagQuery, setTagQuery] = useState('');
     const [tagSuggestions, setTagSuggestions] = useState<Tag[]>([]);
+    const [selectedPublishers, setSelectedPublishers] = useState<Publisher[]>([]);
+    const [publisherQuery, setPublisherQuery] = useState('');
+    const [publisherSuggestions, setPublisherSuggestions] = useState<Publisher[]>([]);
+    const [isSearchingPublisher, setIsSearchingPublisher] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
@@ -42,27 +53,25 @@ export default function CreateFeedModal({ isOpen, onClose, initialData }: Create
                 if (initialData.tags && initialData.tags.length > 0) {
                     setSelectedTags(initialData.tags);
                 } else if (initialData.tagIds && initialData.tagIds.length > 0) {
-                    // Fetch tags by IDs since we don't have them
-                    // We don't have a specific bulk fetch endpoint for tags by IDs exposed to client easily
-                    // But we can assume we might need one or reuse search?
-                    // Reusing search for each ID is bad.
-                    // Let's create a quick loop or just leave it blank for now?
-                    // User expects to see their tags.
-                    // I will implement a small helper to fetch tags. 
-                    // Since I cannot easily create a new endpoint inside this component, 
-                    // I will use a Promise.all with the search endpoint? No, search is by name.
-                    // I'll create a new server action or util? No, 'DELETE actions/feeds.ts'.
-                    // I will add a `ids` param to the search endpoint! /api/tags/search?ids=1,2,3
-
                     fetch(`/api/tags/search?ids=${initialData.tagIds.join(',')}`)
                         .then(res => res.json())
                         .then(tags => setSelectedTags(tags))
                         .catch(err => console.error("Failed to load tags for edit", err));
                 }
+
+                if (initialData.publishers && initialData.publishers.length > 0) {
+                    setSelectedPublishers(initialData.publishers);
+                } else if (initialData.publisherIds && initialData.publisherIds.length > 0) {
+                    fetch(`/api/publishers/search?ids=${initialData.publisherIds.join(',')}`)
+                        .then(res => res.json())
+                        .then(pubs => setSelectedPublishers(pubs))
+                        .catch(err => console.error("Failed to load publishers for edit", err));
+                }
             } else {
                 setName('');
                 setDescription('');
                 setSelectedTags([]);
+                setSelectedPublishers([]);
             }
         }
     }, [isOpen, initialData]);
@@ -91,6 +100,29 @@ export default function CreateFeedModal({ isOpen, onClose, initialData }: Create
         return () => clearTimeout(timeoutId);
     }, [tagQuery, selectedTags]);
 
+    useEffect(() => {
+        const fetchPublishers = async () => {
+            if (publisherQuery.length < 2) {
+                setPublisherSuggestions([]);
+                return;
+            }
+            setIsSearchingPublisher(true);
+            try {
+                const res = await fetch(`/api/publishers/search?q=${encodeURIComponent(publisherQuery)}`);
+                if (res.ok) {
+                    const pubs: Publisher[] = await res.json();
+                    setPublisherSuggestions(pubs.filter(p => !selectedPublishers.some(selected => selected.publisher_id === p.publisher_id)));
+                }
+            } catch (error) {
+                console.error("Failed to search publishers", error);
+            } finally {
+                setIsSearchingPublisher(false);
+            }
+        }
+        const timeoutId = setTimeout(fetchPublishers, 300);
+        return () => clearTimeout(timeoutId);
+    }, [publisherQuery, selectedPublishers]);
+
     const handleAddTag = (tag: Tag) => {
         setSelectedTags([...selectedTags, tag]);
         setTagQuery('');
@@ -101,9 +133,19 @@ export default function CreateFeedModal({ isOpen, onClose, initialData }: Create
         setSelectedTags(selectedTags.filter(t => t.tag_id !== tagId));
     };
 
+    const handleAddPublisher = (publisher: Publisher) => {
+        setSelectedPublishers([...selectedPublishers, publisher]);
+        setPublisherQuery('');
+        setPublisherSuggestions([]);
+    }
+
+    const handleRemovePublisher = (publisherId: string) => {
+        setSelectedPublishers(selectedPublishers.filter(p => p.publisher_id !== publisherId));
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!name || selectedTags.length === 0) return;
+        if (!name) return;
 
         setIsSubmitting(true);
         try {
@@ -118,6 +160,7 @@ export default function CreateFeedModal({ isOpen, onClose, initialData }: Create
                     name,
                     description,
                     tagIds: selectedTags.map(t => t.tag_id),
+                    publisherIds: selectedPublishers.map(p => p.publisher_id),
                 }),
             });
 
@@ -126,6 +169,7 @@ export default function CreateFeedModal({ isOpen, onClose, initialData }: Create
                 setName('');
                 setDescription('');
                 setSelectedTags([]);
+                setSelectedPublishers([]);
                 router.refresh();
             } else {
                 throw new Error('Failed to save feed');
@@ -175,7 +219,7 @@ export default function CreateFeedModal({ isOpen, onClose, initialData }: Create
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Tags (Required)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Tags (Optional)</label>
                         <div className="flex flex-wrap gap-2 mb-2">
                             {selectedTags.map(tag => (
                                 <span key={tag.tag_id} className="inline-flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-full text-sm">
@@ -220,10 +264,56 @@ export default function CreateFeedModal({ isOpen, onClose, initialData }: Create
                         </div>
                     </div>
 
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Publishers (Optional)</label>
+                        <div className="flex flex-wrap gap-2 mb-2">
+                            {selectedPublishers.map(pub => (
+                                <span key={pub.publisher_id} className="inline-flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-full text-sm">
+                                    {pub.name}
+                                    <button type="button" onClick={() => handleRemovePublisher(pub.publisher_id)} className="hover:text-red-500">
+                                        <X className="w-3 h-3" />
+                                    </button>
+                                </span>
+                            ))}
+                        </div>
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Search className="h-4 w-4 text-gray-400" />
+                            </div>
+                            <input
+                                type="text"
+                                value={publisherQuery}
+                                onChange={(e) => setPublisherQuery(e.target.value)}
+                                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+                                placeholder="Search publishers..."
+                            />
+                            {isSearchingPublisher && (
+                                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <Loader2 className="h-4 w-4 text-gray-400 animate-spin" />
+                                </div>
+                            )}
+
+                            {publisherSuggestions.length > 0 && (
+                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                                    {publisherSuggestions.map(pub => (
+                                        <button
+                                            key={pub.publisher_id}
+                                            type="button"
+                                            onClick={() => handleAddPublisher(pub)}
+                                            className="w-full text-left px-4 py-2 hover:bg-gray-50 text-sm"
+                                        >
+                                            {pub.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
                     <div className="pt-2">
                         <button
                             type="submit"
-                            disabled={isSubmitting || selectedTags.length === 0 || !name.trim()}
+                            disabled={isSubmitting || !name.trim()}
                             className="w-full bg-black text-white py-2 rounded-md font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isSubmitting ? 'Saving...' : (initialData ? 'Save Changes' : 'Create Feed')}

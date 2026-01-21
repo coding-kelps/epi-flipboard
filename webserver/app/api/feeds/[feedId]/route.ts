@@ -27,7 +27,7 @@ export async function PUT(
         const body = await req.json();
         const { name, description, tagIds } = body;
 
-        if (!name || !tagIds || !Array.isArray(tagIds)) {
+        if (!name) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
@@ -53,6 +53,7 @@ export async function PUT(
                 name,
                 description,
                 tagIds: tagIds.map((id: number) => BigInt(id)),
+                publisherIds: body.publisherIds ? body.publisherIds.map((id: number) => BigInt(id)) : [],
             },
         });
 
@@ -60,6 +61,7 @@ export async function PUT(
         return NextResponse.json({
             ...updatedFeed,
             tagIds: updatedFeed.tagIds.map((id) => Number(id)),
+            publisherIds: updatedFeed.publisherIds.map((id) => Number(id)),
             userId: Number(updatedFeed.userId),
         });
 

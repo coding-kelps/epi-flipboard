@@ -44,6 +44,26 @@ async function getFeed(feedId: number) {
     return feed;
 }
 
+
+// Helper to get publishers by IDs
+async function getPublishersByIds(publisherIds: bigint[]) {
+    if (!publisherIds || !publisherIds.length) return [];
+
+    const prismaContent = getPrismaContent();
+    const publishers = await prismaContent.publishers.findMany({
+        where: {
+            publisher_id: {
+                in: publisherIds
+            }
+        }
+    });
+
+    return publishers.map(p => ({
+        publisher_id: p.publisher_id.toString(),
+        name: p.display_name || p.name
+    }));
+}
+
 export default async function FeedPage({ params }: FeedPageProps) {
     const { feedId } = await params;
     const id = parseInt(feedId, 10);
@@ -58,9 +78,10 @@ export default async function FeedPage({ params }: FeedPageProps) {
         notFound();
     }
 
-    // Fetch tags for display
+    // Fetch tags and publishers for display
     const tags = await getTagsByIds(feed.tagIds);
-    const articles = await getArticlesByTags(feed.tagIds);
+    const publishers = await getPublishersByIds(feed.publisherIds);
+    const articles = await getArticlesByTags(feed.tagIds, feed.publisherIds);
 
     // --- Reuse display logic from app/page.tsx ---
 
@@ -156,6 +177,11 @@ export default async function FeedPage({ params }: FeedPageProps) {
                         <span key={tag.tag_id} className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-white bg-black px-3 py-1 rounded-full">
                             <Tag className="w-3 h-3" />
                             {tag.name}
+                        </span>
+                    ))}
+                    {publishers.map(pub => (
+                        <span key={pub.publisher_id} className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-black bg-gray-200 px-3 py-1 rounded-full">
+                            {pub.name}
                         </span>
                     ))}
                 </div>

@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.2.0",
   "engineVersion": "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3",
   "activeProvider": "postgresql",
-  "inlineSchema": "generator client {\n  provider   = \"prisma-client\"\n  output     = \"../../app/generated/prisma-activity\"\n  engineType = \"client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Feed {\n  id          Int      @id @default(autoincrement()) @map(\"feed_id\")\n  name        String   @unique\n  description String?\n  tagIds      BigInt[] @map(\"tag_ids\")\n  userId      Int      @map(\"user_id\")\n  createdAt   DateTime @default(now()) @db.Timestamptz(6)\n\n  @@map(\"feeds\")\n}\n",
+  "inlineSchema": "generator client {\n  provider   = \"prisma-client\"\n  output     = \"../../app/generated/prisma-activity\"\n  engineType = \"client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Feed {\n  id           Int      @id @default(autoincrement()) @map(\"feed_id\")\n  name         String   @unique\n  description  String?\n  tagIds       BigInt[] @map(\"tag_ids\")\n  publisherIds BigInt[] @map(\"publisher_ids\")\n  userId       Int      @map(\"user_id\")\n  createdAt    DateTime @default(now()) @db.Timestamptz(6)\n\n  @@map(\"feeds\")\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -28,7 +28,7 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Feed\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"feed_id\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tagIds\",\"kind\":\"scalar\",\"type\":\"BigInt\",\"dbName\":\"tag_ids\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"user_id\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"feeds\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Feed\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"feed_id\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tagIds\",\"kind\":\"scalar\",\"type\":\"BigInt\",\"dbName\":\"tag_ids\"},{\"name\":\"publisherIds\",\"kind\":\"scalar\",\"type\":\"BigInt\",\"dbName\":\"publisher_ids\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"user_id\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"feeds\"}},\"enums\":{},\"types\":{}}")
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
   const { Buffer } = await import('node:buffer')

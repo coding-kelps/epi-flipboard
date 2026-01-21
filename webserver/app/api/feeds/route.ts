@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const { name, description, tagIds } = body;
 
-        if (!name || !tagIds || !Array.isArray(tagIds)) {
+        if (!name) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
                 name,
                 description,
                 tagIds: tagIds.map((id: number) => BigInt(id)), // Prisma expects BigInt[] for tagIds
+                publisherIds: body.publisherIds ? body.publisherIds.map((id: number) => BigInt(id)) : [],
                 userId: userId,
             },
         });
@@ -41,6 +42,7 @@ export async function POST(req: NextRequest) {
         const serializedFeed = {
             ...feed,
             tagIds: feed.tagIds.map((id) => Number(id)),
+            publisherIds: feed.publisherIds.map((id) => Number(id)),
             userId: Number(feed.userId),
         };
 
