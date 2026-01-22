@@ -21,10 +21,12 @@ class PostgreSQLConfig(dg.Config):
 		description='The name of the database to connect to within the postgreSQL server.',
 	)
 
+
 class PostgreSQLResource(dg.ConfigurableResource):
 	"""
 	A Dagster resource wrapper for interacting with a PostgreSQL database.
 	"""
+
 	config: PostgreSQLConfig = Field(
 		description=(
 			"""Parameters to set up connection to a PostgreSQL database.

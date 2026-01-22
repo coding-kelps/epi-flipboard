@@ -9,6 +9,7 @@ from epiflipboard_aggregator.resources import (
 	SentenceTransformerConfig as SentenceTransformerResourceConfig,
 )
 
+
 def resolve_maybe_file(context: dg.ResolutionContext, raw: str) -> str:
 	if raw.startswith('file://'):
 		with open(raw[7:], 'r') as file:
@@ -16,29 +17,35 @@ def resolve_maybe_file(context: dg.ResolutionContext, raw: str) -> str:
 	else:
 		return raw
 
+
 StringOrFile = Annotated[
 	str,
 	dg.Resolver(resolve_maybe_file, model_field_type=str),
 ]
+
 
 class SourceConfig(dg.Config, dg.Resolvable):
 	"""
 	SourceConfig defines the Dagster component a RSS feed source
 	config attribute definition interface.
 	"""
+
 	name: str = Field(
 		description='Name of the RSS feed source',
 	)
 	opml_url: str = Field(
 		description='URL to fetch the OPML file.',
 	)
-	
+
+
 class SourceProperties(NamedTuple):
-  """
-  SourceProperties is the internal component structure representing
-  a RSS feed source.
-  """
-  opml_url: str
+	"""
+	SourceProperties is the internal component structure representing
+	a RSS feed source.
+	"""
+
+	opml_url: str
+
 
 def resolve_sources(context: dg.ResolutionContext, source_configs: List[SourceConfig]):
 	sources = {}
@@ -50,7 +57,11 @@ def resolve_sources(context: dg.ResolutionContext, source_configs: List[SourceCo
 
 	return sources
 
-Sources = Annotated[Dict[str, SourceProperties], dg.Resolver(resolve_sources, model_field_type=List[SourceConfig])]
+
+Sources = Annotated[
+	Dict[str, SourceProperties], dg.Resolver(resolve_sources, model_field_type=List[SourceConfig])
+]
+
 
 class S3Config(S3Resource, dg.Resolvable):
 	aws_access_key_id: StringOrFile | None = Field(
@@ -66,13 +77,13 @@ class S3Config(S3Resource, dg.Resolvable):
 		default=None,
 	)
 
+
 class S3IOManagerConfig(dg.Config, dg.Resolvable):
 	"""
 	S3Config defines the Dagster S3 I/O Manager configuration.
 	"""
-	bucket: str = Field(
-		description='Name of the S3 bucket.'
-	)
+
+	bucket: str = Field(description='Name of the S3 bucket.')
 	prefix: str = Field(
 		description='Filepath prefix of the stored artifacts in the S3 buckets by the I/O Manager',
 		default='dagster',
@@ -98,10 +109,9 @@ class PostgreSQLConfig(PostgreSQLResourceConfig, dg.Resolvable):
 		""",
 	)
 
+
 class OpenAIConfig(dg.Config, dg.Resolvable):
-	model_name: str = Field(
-		description='OpenAI model name.'
-	)
+	model_name: str = Field(description='OpenAI model name.')
 	api_key: StringOrFile = Field(
 		description="""
 			OpenAI API token. It can either be defined as a raw string or
@@ -110,8 +120,10 @@ class OpenAIConfig(dg.Config, dg.Resolvable):
 		"""
 	)
 
+
 class SentenceTransformerConfig(SentenceTransformerResourceConfig, dg.Resolvable):
 	pass
+
 
 class QdrantConfig(QdrantResourceConfig, dg.Resolvable):
 	pass
