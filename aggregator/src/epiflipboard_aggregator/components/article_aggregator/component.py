@@ -1,10 +1,12 @@
 import dagster as dg
 import feedparser
+import html
 import numpy as np
 import pandas as pd
+import re
 import requests
 import uuid
-from dagster_aws.s3 import S3PickleIOManager, S3Resource
+from dagster_aws.s3 import S3PickleIOManager
 from dagster_openai import OpenAIResource
 from dagster_qdrant import QdrantResource
 from lxml import etree
@@ -31,6 +33,10 @@ from epiflipboard_aggregator.components.article_aggregator.utils import (
 class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 	"""Aggregator of articles from public RSS feed."""
 
+	automation_cron: str | None = Field(
+		description='The cron defining the component execution automation.',
+		default=None,
+	)
 	s3_io_manager: S3IOManagerConfig = Field(
 		description='Configuration of the S3 I/O Manager',
 	)
@@ -86,8 +92,8 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 				'schema': {
 					'type': 'mapping',
 					'key_schema': {
-						"type": "string",
-            "description": "Dynamically assigned from the RSS feed name",
+						'type': 'string',
+						'description': 'Dynamically assigned from the RSS feed name',
 					},
 					'value_schema': {
 						'type': 'array',
@@ -111,7 +117,7 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 					'nb_entries': 'The number of fetched RSS feed entries',
 					'nb_rss_feeds': 'The number of unique RSS feed used as sources',
 					'entries_rss_feeds_dist': 'A dictionnary couting the number of RSS feed entries fetched by feed',
-				}
+				},
 			},
 			partitions_def=partitioning,
 		)
@@ -187,13 +193,13 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 					'publisher': 'Article publisher name',
 					'published_at': 'Timestamp of the article publication',
 					'original_url': 'Canonical URL of the article',
-					'image_url': 'Optional URL of the associated article image'
+					'image_url': 'Optional URL of the associated article image',
 				},
 				'metadata': {
 					'nb_articles': 'Number of parsed article in the asset',
 					'nb_parsing_fail': 'Number of parsing fails that excluded RSS entries from the asset',
 					'failed_parsing_dist': 'Dictionnary of parsing fail distribution by RSS feed',
-				}
+				},
 			},
 		)
 		def parsed_articles(
@@ -218,6 +224,10 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 
 						authors = [a.get('name') for a in entry.get('authors', [])]
 						description = entry.get('summary') or entry.get('description')
+
+						if description:
+							description = html.unescape(re.sub(r'<p>|</p>', '', description))
+
 						published_at = parse_datetime(
 							entry.get('published') or entry.get('updated')
 						)
@@ -259,7 +269,7 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 					'publisher_id': 'Unique identifier for each publisher',
 					'name': 'Name advertised by the publisher (must be unique)',
 					'display_name': 'Optional human-readable display name for the publisher (must be unique)',
-					'image_url': 'Optional URL to the publisher logo'
+					'image_url': 'Optional URL to the publisher logo',
 				},
 				'primary_key': ['publisher_id'],
 				'metadata': {
@@ -889,7 +899,7 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 			generated_tags_with_database_duplicate: pd.DataFrame,
 		):
 			article_tag_df = generated_tags_with_database_duplicate
-	
+
 			with postgresql.get_connection() as conn:
 				with conn.cursor() as cur:
 					cur.execute("""
@@ -903,38 +913,44 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 						COMMENT ON COLUMN article_tag.article_id IS 'Primary key: identifier of the article';
 						COMMENT ON COLUMN article_tag.tag_id IS 'Primary key: identifier of the tag';
 					""")
-	
+
 					tag_names = article_tag_df['tag_name'].unique().tolist()
-					cur.execute("""
+					cur.execute(
+						"""
 						SELECT name, tag_id
 						FROM tags
 						WHERE name = ANY(%s)
-					""", (tag_names,))
+					""",
+						(tag_names,),
+					)
 					tag_lookup = dict(cur.fetchall())
-	
+
 					all_urls = set()
 					for urls in article_tag_df['articles_original_url']:
 						all_urls.update(urls)
-	
-					cur.execute("""
+
+					cur.execute(
+						"""
 						SELECT original_url, article_id
 						FROM articles
 						WHERE original_url = ANY(%s)
-					""", (list(all_urls),))
+					""",
+						(list(all_urls),),
+					)
 					article_lookup = dict(cur.fetchall())
-	
+
 					data = []
-	
+
 					for _, row in article_tag_df.iterrows():
 						tag_name = row['tag_name']
 						tag_id = tag_lookup.get(tag_name)
-						
+
 						for original_url in row['articles_original_url']:
 							article_id = article_lookup.get(original_url)
-							
+
 							if article_id and tag_id:
 								data.append((article_id, tag_id))
-	
+
 					cur.executemany(
 						"""
 						INSERT INTO article_tag (
@@ -949,12 +965,12 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 						""",
 						data,
 					)
-	
+
 					cur.execute('SELECT COUNT(*) FROM article_tag')
 					row_count = cur.fetchone()[0]
-	
+
 				conn.commit()
-	
+
 			return dg.MaterializeResult(
 				metadata={
 					'row_count': row_count,
@@ -977,10 +993,10 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 			],
 			resources={
 				'io_manager': S3PickleIOManager(
-            s3_resource=self.s3_io_manager.s3,
-            s3_bucket=self.s3_io_manager.bucket,
-            s3_prefix=self.s3_io_manager.prefix,
-        ),
+					s3_resource=self.s3_io_manager.s3,
+					s3_bucket=self.s3_io_manager.bucket,
+					s3_prefix=self.s3_io_manager.prefix,
+				),
 				'postgresql': PostgreSQLResource(
 					config=self.postgresql,
 				),
@@ -994,4 +1010,15 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 					config=self.qdrant,
 				),
 			},
+			schedules=[
+				dg.ScheduleDefinition(
+					job=dg.define_asset_job(
+						name='epi_flipboard_ingestion',
+						selection='*',
+					),
+					cron_schedule=self.automation_cron,
+				)
+			]
+			if self.automation_cron
+			else None,
 		)

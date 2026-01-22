@@ -15,6 +15,7 @@ attributes:
       opml_url: https://raw.githubusercontent.com/coding-kelps/epi-flipboard/refs/heads/main/aggregator/sources/united-states.opml
   max_article_per_feed: 5
   article_tag_similarity_threshold: 0.70
+  automation_cron: "0 */12 * * *"
   postgresql:
     username: "{{ env.POSTGRES_USER }}"
     password: "{{ env.POSTGRES_PASSWORD }}"
