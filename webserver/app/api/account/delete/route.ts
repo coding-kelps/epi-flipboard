@@ -16,7 +16,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const payload = verifyToken(token);
-    if (!payload) {
+    if (!payload || typeof payload === 'string' || !payload.userId) {
         span?.addEvent('user.delete_account_failed', { reason: 'invalid_token' });
         return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }

@@ -4,7 +4,7 @@ import { Prisma } from "@/app/generated/prisma-content/client";
 import { trace } from '@opentelemetry/api';
 
 export type Article = Prisma.articlesGetPayload<{
-  include: { publishers: true; article_tag: true };
+  include: { publishers: true; article_tag: { include: { tags: true } } };
 }>;
 
 export async function getArticles(): Promise<Article[]> {
@@ -13,7 +13,11 @@ export async function getArticles(): Promise<Article[]> {
     const articles = await prismaContent.articles.findMany({
       include: {
         publishers: true,
-        article_tag: true,
+        article_tag: {
+          include: {
+            tags: true,
+          },
+        },
       },
       orderBy: {
         published_at: "desc",
@@ -52,7 +56,11 @@ export async function searchArticles(query: string): Promise<Article[]> {
         },
         include: {
           publishers: true,
-          article_tag: true,
+          article_tag: {
+            include: {
+              tags: true,
+            },
+          },
         },
         orderBy: {
           published_at: "desc",
@@ -99,7 +107,11 @@ export async function getArticlesByTags(tagIds: bigint[], publisherIds: bigint[]
       },
       include: {
         publishers: true,
-        article_tag: true,
+        article_tag: {
+          include: {
+            tags: true
+          }
+        },
       },
       orderBy: {
         published_at: "desc",

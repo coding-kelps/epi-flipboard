@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     }
 
     const payload = verifyToken(token);
-    if (!payload?.userId) {
+    if (!payload || typeof payload === 'string' || !payload.userId) {
         return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 

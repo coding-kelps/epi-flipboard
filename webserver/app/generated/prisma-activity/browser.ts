@@ -22,3 +22,8 @@ export * from './enums';
  * 
  */
 export type Feed = Prisma.FeedModel
+/**
+ * Model Comment
+ * 
+ */
+export type Comment = Prisma.CommentModel

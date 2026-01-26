@@ -17,7 +17,7 @@ async function getUserFeeds() {
     if (!token) return null;
 
     const payload = verifyToken(token);
-    if (!payload?.userId) return null;
+    if (!payload || typeof payload === 'string' || !payload.userId) return null;
 
     const prismaActivity = getPrismaActivity();
     const feeds = await prismaActivity.feed.findMany({
