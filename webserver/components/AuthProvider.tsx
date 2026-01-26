@@ -16,6 +16,7 @@ interface AuthContextType {
     login: (token?: string) => void;
     logout: () => void;
     refreshUser: () => Promise<void>;
+    isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -24,6 +25,7 @@ const AuthContext = createContext<AuthContextType>({
     login: () => { },
     logout: () => { },
     refreshUser: async () => { },
+    isAuthenticated: false,
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -40,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             } else {
                 setUser(null);
             }
-        } catch (error) {
+        } catch {
             setUser(null);
         } finally {
             setLoading(false);
@@ -67,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout, refreshUser }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, refreshUser, isAuthenticated: !!user }}>
             {children}
         </AuthContext.Provider>
     );

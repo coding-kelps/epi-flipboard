@@ -17,7 +17,7 @@ export async function PUT(
     }
 
     const payload = verifyToken(token);
-    if (!payload?.userId) {
+    if (!payload || typeof payload === 'string' || !payload.userId) {
         return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
@@ -84,7 +84,7 @@ export async function DELETE(
     }
 
     const payload = verifyToken(token);
-    if (!payload?.userId) {
+    if (!payload || typeof payload === 'string' || !payload.userId) {
         return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 

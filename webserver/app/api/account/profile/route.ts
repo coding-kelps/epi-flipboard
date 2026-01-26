@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     }
 
     const payload = verifyToken(token);
-    if (!payload) {
+    if (!payload || typeof payload === 'string' || !payload.userId) {
         return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
@@ -49,7 +49,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const payload = verifyToken(token);
-    if (!payload) {
+    if (!payload || typeof payload === 'string' || !payload.userId) {
         return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 

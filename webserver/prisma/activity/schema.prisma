@@ -19,3 +19,14 @@ model Feed {
 
   @@map("feeds")
 }
+
+model Comment {
+  id        Int      @id @default(autoincrement()) @map("comment_id")
+  content   String
+  articleId BigInt   @map("article_id")
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@map("comments")
+  @@index([articleId])
+}
