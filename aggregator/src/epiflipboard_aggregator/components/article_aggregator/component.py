@@ -76,12 +76,10 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 		)
 
 	def build_defs(self, context: dg.ComponentLoadContext) -> dg.Definitions:
-		partitioning = dg.StaticPartitionsDefinition([name for name in self.sources.keys()])
-
 		@dg.asset(
 			kinds={'Python'},
 			group_name='EpiFlipBoard',
-			code_version='0.1.0',
+			code_version='0.2.0',
 			description="""
         Dictionnary of raw RSS feed entries by source.
 			""",
@@ -119,52 +117,49 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 					'entries_rss_feeds_dist': 'A dictionnary couting the number of RSS feed entries fetched by feed',
 				},
 			},
-			partitions_def=partitioning,
 		)
 		def raw_rss_feed_entries(
 			context: dg.AssetExecutionContext,
 		) -> Dict[str, List[feedparser.FeedParserDict]]:
-			source_name = context.partition_key
-			source = self.sources[source_name]
-
-			context.log.info(
-				f'download partition corresponding OPML file from URL: {source.opml_url}'
-			)
-			try:
-				response = requests.get(source.opml_url, timeout=15)
-				response.raise_for_status()
-
-				parser = etree.XMLParser(recover=True)
-				opml = etree.fromstring(response.content, parser)
-			except Exception:
-				return dg.Failure(
-					description=f'Failed to download source {source_name} OPML file from given URL: {source.opml_url}'
+			for name, source in self.sources.items():
+				context.log.info(
+					f'download partition corresponding OPML file from URL: {source.opml_url}'
 				)
+				try:
+					response = requests.get(source.opml_url, timeout=15)
+					response.raise_for_status()
 
-			# Parse OPML file to retrieve listed RSS feeds.
-			feeds = {
-				outline.attrib['title']: outline.attrib['xmlUrl']
-				for outline in opml.findall('.//outline')
-				if 'xmlUrl' in outline.attrib
-			}
+					parser = etree.XMLParser(recover=True)
+					opml = etree.fromstring(response.content, parser)
+				except Exception:
+					return dg.Failure(
+						description=f'Failed to download source {name} OPML file from given URL: {source.opml_url}'
+					)
 
-			context.log.info(f'total rss feeds retrieved from OPML: {len(feeds)}')
+				# Parse OPML file to retrieve listed RSS feeds.
+				feeds = {
+					outline.attrib['title']: outline.attrib['xmlUrl']
+					for outline in opml.findall('.//outline')
+					if 'xmlUrl' in outline.attrib
+				}
 
-			feeds_entries = {}
-			entries_dist = {key: 0 for key in feeds}
+				context.log.info(f'total rss feeds retrieved from OPML: {len(feeds)}')
 
-			for feed_name, feed_url in feeds.items():
-				context.log.info(f'retrieving articles from: {feed_name}')
+				feeds_entries = {}
+				entries_dist = {key: 0 for key in feeds}
 
-				feed = feedparser.parse(feed_url)
+				for feed_name, feed_url in feeds.items():
+					context.log.info(f'retrieving articles from: {feed_name}')
 
-				for entry in feed.entries[: self.max_article_per_feed]:
-					if feed_name in feeds_entries:
-						feeds_entries[feed_name].append(entry)
-					else:
-						feeds_entries[feed_name] = [entry]
+					feed = feedparser.parse(feed_url)
 
-					entries_dist[feed_name] += 1
+					for entry in feed.entries[: self.max_article_per_feed]:
+						if feed_name in feeds_entries:
+							feeds_entries[feed_name].append(entry)
+						else:
+							feeds_entries[feed_name] = [entry]
+
+						entries_dist[feed_name] += 1
 
 			return dg.MaterializeResult(
 				value=feeds_entries,
@@ -204,46 +199,45 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 		)
 		def parsed_articles(
 			context: dg.AssetExecutionContext,
-			raw_rss_feed_entries: Dict[str, Dict[str, List[feedparser.FeedParserDict]]],
+			raw_rss_feed_entries: Dict[str, List[feedparser.FeedParserDict]],
 		) -> pd.DataFrame:
 			articles = []
 
 			failed_parsing_dist = {
-				key: 0 for partitions in raw_rss_feed_entries.values() for key in partitions
+				key: 0 for key in raw_rss_feed_entries.keys()
 			}
 
-			for partition_feeds in raw_rss_feed_entries.values():
-				for feed_name, feed_entries in partition_feeds.items():
-					for entry in feed_entries:
-						title = entry.get('title')
-						original_url = entry.get('link')
+			for feed_name, feed_entries in raw_rss_feed_entries.items():
+				for entry in feed_entries:
+					title = entry.get('title')
+					original_url = entry.get('link')
 
-						if not title or not original_url:
-							context.log.warning(f'failed to parse article from source: {feed_name}')
-							continue
+					if not title or not original_url:
+						context.log.warning(f'failed to parse article from source: {feed_name}')
+						continue
 
-						authors = [a.get('name') for a in entry.get('authors', [])]
-						description = entry.get('summary') or entry.get('description')
+					authors = [a.get('name') for a in entry.get('authors', [])]
+					description = entry.get('summary') or entry.get('description')
 
-						if description:
-							description = html.unescape(re.sub(r'<p>|</p>', '', description))
+					if description:
+						description = html.unescape(re.sub(r'<p>|</p>', '', description))
 
-						published_at = parse_datetime(
-							entry.get('published') or entry.get('updated')
-						)
-						image_url = extract_image(entry)
+					published_at = parse_datetime(
+						entry.get('published') or entry.get('updated')
+					)
+					image_url = extract_image(entry)
 
-						articles.append(
-							{
-								'title': title,
-								'authors': authors,
-								'description': description,
-								'publisher': feed_name,
-								'published_at': published_at,
-								'original_url': original_url,
-								'image_url': image_url,
-							}
-						)
+					articles.append(
+						{
+							'title': title,
+							'authors': authors,
+							'description': description,
+							'publisher': feed_name,
+							'published_at': published_at,
+							'original_url': original_url,
+							'image_url': image_url,
+						}
+					)
 
 			return dg.MaterializeResult(
 				value=pd.DataFrame(articles),
