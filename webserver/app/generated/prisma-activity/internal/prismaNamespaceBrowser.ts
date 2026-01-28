@@ -52,7 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Feed: 'Feed',
-  Comment: 'Comment'
+  Comment: 'Comment',
+  MarkedArticle: 'MarkedArticle'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -93,6 +94,16 @@ export const CommentScalarFieldEnum = {
 } as const
 
 export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
+
+
+export const MarkedArticleScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  articleId: 'articleId',
+  createdAt: 'createdAt'
+} as const
+
+export type MarkedArticleScalarFieldEnum = (typeof MarkedArticleScalarFieldEnum)[keyof typeof MarkedArticleScalarFieldEnum]
 
 
 export const SortOrder = {

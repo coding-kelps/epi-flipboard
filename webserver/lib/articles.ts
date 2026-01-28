@@ -125,3 +125,31 @@ export async function getArticlesByTags(tagIds: bigint[], publisherIds: bigint[]
   }
 }
 
+
+export async function getArticlesByIds(ids: bigint[]): Promise<Article[]> {
+  const prismaContent = getPrismaContent();
+  try {
+    const articles = await prismaContent.articles.findMany({
+      where: {
+        article_id: {
+          in: ids,
+        },
+      },
+      include: {
+        publishers: true,
+        article_tag: {
+          include: {
+            tags: true,
+          },
+        },
+      },
+      orderBy: {
+        published_at: "desc",
+      },
+    });
+    return articles;
+  } catch (error) {
+    console.error("Failed to fetch articles by ids:", error);
+    return [];
+  }
+}

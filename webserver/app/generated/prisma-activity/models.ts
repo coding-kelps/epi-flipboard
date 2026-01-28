@@ -10,4 +10,5 @@
  */
 export type * from './models/Feed'
 export type * from './models/Comment'
+export type * from './models/MarkedArticle'
 export type * from './commonInputTypes'
