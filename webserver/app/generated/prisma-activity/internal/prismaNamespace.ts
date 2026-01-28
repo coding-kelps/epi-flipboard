@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.2.0
- * Query Engine version: 0c8ef2ce45c83248ab3df073180d5eda9e8be7a3
+ * Prisma Client JS version: 7.3.0
+ * Query Engine version: 9d6ad21cbbceab97458517b147a6a09ff43aa735
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.2.0",
-  engine: "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3"
+  client: "7.3.0",
+  engine: "9d6ad21cbbceab97458517b147a6a09ff43aa735"
 }
 
 /**
@@ -386,7 +386,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   Feed: 'Feed',
   Comment: 'Comment',
-  MarkedArticle: 'MarkedArticle'
+  MarkedArticle: 'MarkedArticle',
+  FollowedFeed: 'FollowedFeed'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -402,7 +403,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "feed" | "comment" | "markedArticle"
+    modelProps: "feed" | "comment" | "markedArticle" | "followedFeed"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -628,6 +629,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    FollowedFeed: {
+      payload: Prisma.$FollowedFeedPayload<ExtArgs>
+      fields: Prisma.FollowedFeedFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FollowedFeedFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowedFeedPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FollowedFeedFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowedFeedPayload>
+        }
+        findFirst: {
+          args: Prisma.FollowedFeedFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowedFeedPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FollowedFeedFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowedFeedPayload>
+        }
+        findMany: {
+          args: Prisma.FollowedFeedFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowedFeedPayload>[]
+        }
+        create: {
+          args: Prisma.FollowedFeedCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowedFeedPayload>
+        }
+        createMany: {
+          args: Prisma.FollowedFeedCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FollowedFeedCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowedFeedPayload>[]
+        }
+        delete: {
+          args: Prisma.FollowedFeedDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowedFeedPayload>
+        }
+        update: {
+          args: Prisma.FollowedFeedUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowedFeedPayload>
+        }
+        deleteMany: {
+          args: Prisma.FollowedFeedDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FollowedFeedUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FollowedFeedUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowedFeedPayload>[]
+        }
+        upsert: {
+          args: Prisma.FollowedFeedUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowedFeedPayload>
+        }
+        aggregate: {
+          args: Prisma.FollowedFeedAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFollowedFeed>
+        }
+        groupBy: {
+          args: Prisma.FollowedFeedGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FollowedFeedGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FollowedFeedCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FollowedFeedCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -699,6 +774,16 @@ export const MarkedArticleScalarFieldEnum = {
 } as const
 
 export type MarkedArticleScalarFieldEnum = (typeof MarkedArticleScalarFieldEnum)[keyof typeof MarkedArticleScalarFieldEnum]
+
+
+export const FollowedFeedScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  feedId: 'feedId',
+  createdAt: 'createdAt'
+} as const
+
+export type FollowedFeedScalarFieldEnum = (typeof FollowedFeedScalarFieldEnum)[keyof typeof FollowedFeedScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -898,6 +983,7 @@ export type GlobalOmitConfig = {
   feed?: Prisma.FeedOmit
   comment?: Prisma.CommentOmit
   markedArticle?: Prisma.MarkedArticleOmit
+  followedFeed?: Prisma.FollowedFeedOmit
 }
 
 /* Types for Logging */

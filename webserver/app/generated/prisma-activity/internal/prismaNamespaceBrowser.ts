@@ -53,7 +53,8 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   Feed: 'Feed',
   Comment: 'Comment',
-  MarkedArticle: 'MarkedArticle'
+  MarkedArticle: 'MarkedArticle',
+  FollowedFeed: 'FollowedFeed'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -62,12 +63,12 @@ export type ModelName = (typeof ModelName)[keyof typeof ModelName]
  * Enums
  */
 
-export const TransactionIsolationLevel = {
+export const TransactionIsolationLevel = runtime.makeStrictEnum({
   ReadUncommitted: 'ReadUncommitted',
   ReadCommitted: 'ReadCommitted',
   RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
-} as const
+} as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
@@ -104,6 +105,16 @@ export const MarkedArticleScalarFieldEnum = {
 } as const
 
 export type MarkedArticleScalarFieldEnum = (typeof MarkedArticleScalarFieldEnum)[keyof typeof MarkedArticleScalarFieldEnum]
+
+
+export const FollowedFeedScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  feedId: 'feedId',
+  createdAt: 'createdAt'
+} as const
+
+export type FollowedFeedScalarFieldEnum = (typeof FollowedFeedScalarFieldEnum)[keyof typeof FollowedFeedScalarFieldEnum]
 
 
 export const SortOrder = {

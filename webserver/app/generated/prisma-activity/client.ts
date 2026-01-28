@@ -54,3 +54,8 @@ export type Comment = Prisma.CommentModel
  * 
  */
 export type MarkedArticle = Prisma.MarkedArticleModel
+/**
+ * Model FollowedFeed
+ * 
+ */
+export type FollowedFeed = Prisma.FollowedFeedModel

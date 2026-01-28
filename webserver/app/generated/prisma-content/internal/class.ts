@@ -17,8 +17,8 @@ import type * as Prisma from "./prismaNamespace"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.2.0",
-  "engineVersion": "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3",
+  "clientVersion": "7.3.0",
+  "engineVersion": "9d6ad21cbbceab97458517b147a6a09ff43aa735",
   "activeProvider": "postgresql",
   "inlineSchema": "generator client {\n  provider   = \"prisma-client\"\n  output     = \"../../app/generated/prisma-content\"\n  engineType = \"client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\n/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments\nmodel article_tag {\n  article_id BigInt\n  tag_id     BigInt\n  articles   articles @relation(fields: [article_id], references: [article_id], onDelete: Cascade, onUpdate: NoAction)\n  tags       tags     @relation(fields: [tag_id], references: [tag_id], onDelete: Cascade, onUpdate: NoAction)\n\n  @@id([article_id, tag_id])\n}\n\n/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments\nmodel articles {\n  article_id   BigInt        @id @default(autoincrement())\n  title        String\n  description  String?\n  authors      String[]\n  original_url String?       @unique\n  image_url    String?\n  publisher_id BigInt\n  published_at DateTime      @db.Timestamptz(6)\n  created_at   DateTime      @default(now()) @db.Timestamptz(6)\n  article_tag  article_tag[]\n  publishers   publishers    @relation(fields: [publisher_id], references: [publisher_id], onDelete: Cascade, onUpdate: NoAction)\n}\n\n/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments\nmodel publishers {\n  publisher_id BigInt     @id @default(autoincrement())\n  name         String     @unique\n  display_name String?    @unique\n  image_url    String?\n  articles     articles[]\n}\n\n/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments\nmodel tags {\n  tag_id      BigInt        @id @default(autoincrement())\n  name        String        @unique\n  created_at  DateTime      @default(now()) @db.Timestamptz(6)\n  article_tag article_tag[]\n}\n",
   "runtimeDataModel": {
@@ -37,12 +37,14 @@ async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Modul
 }
 
 config.compilerWasm = {
-  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_bg.postgresql.mjs"),
+  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_fast_bg.postgresql.mjs"),
 
   getQueryCompilerWasmModule: async () => {
-    const { wasm } = await import("@prisma/client/runtime/query_compiler_bg.postgresql.wasm-base64.mjs")
+    const { wasm } = await import("@prisma/client/runtime/query_compiler_fast_bg.postgresql.wasm-base64.mjs")
     return await decodeBase64AsWasm(wasm)
-  }
+  },
+
+  importName: "./query_compiler_fast_bg.js"
 }
 
 

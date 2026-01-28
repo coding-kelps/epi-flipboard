@@ -6,6 +6,8 @@ import { checkImageResolution } from "@/lib/image-utils";
 import { Article } from "@/lib/articles";
 import { notFound } from "next/navigation";
 import { Tag } from "lucide-react";
+import FollowButton from "@/components/FollowButton";
+import { getIsFollowingFeed } from "@/app/actions";
 
 export const dynamic = 'force-dynamic';
 
@@ -168,7 +170,10 @@ export default async function FeedPage({ params }: FeedPageProps) {
             <div className="mb-10 border-b-4 border-black pb-6">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h1 className="text-4xl md:text-6xl font-serif font-black text-gray-900 mb-4 tracking-tight">{feed.name}</h1>
+                        <div className="flex items-center gap-4 mb-4">
+                            <h1 className="text-4xl md:text-6xl font-serif font-black text-gray-900 tracking-tight">{feed.name}</h1>
+                            <FollowButton feedId={feed.id} initialIsFollowing={await getIsFollowingFeed(feed.id)} />
+                        </div>
                         <p className="text-xl text-gray-600 font-serif max-w-3xl leading-relaxed">{feed.description}</p>
                     </div>
                 </div>
