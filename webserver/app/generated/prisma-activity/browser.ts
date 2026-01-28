@@ -27,3 +27,8 @@ export type Feed = Prisma.FeedModel
  * 
  */
 export type Comment = Prisma.CommentModel
+/**
+ * Model MarkedArticle
+ * 
+ */
+export type MarkedArticle = Prisma.MarkedArticleModel

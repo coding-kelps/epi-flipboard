@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Article } from "@/lib/articles";
 import { cn } from "@/lib/utils";
-import { X, ExternalLink, Calendar, User, Tag, MessageSquare } from "lucide-react";
+import { X, ExternalLink, Calendar, User, Tag, MessageSquare, Bookmark, BookmarkCheck } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 
 export type ArticleVariant = "lead" | "standard" | "compact";
@@ -78,11 +78,16 @@ export default function ArticleCard({
             </div>
           </div>
           {/* Sliding Footer */}
-          <div className="absolute bottom-0 left-0 w-full bg-white/95 backdrop-blur-sm border-t border-gray-100 py-3 px-4 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 flex items-center gap-2 z-10">
-            <MessageSquare className="w-4 h-4 text-gray-500" />
-            <span className="text-xs font-bold text-gray-700">
-              {commentCount} {commentCount === 1 ? 'Comment' : 'Comments'}
-            </span>
+          <div className="absolute bottom-0 left-0 w-full bg-white/95 backdrop-blur-sm border-t border-gray-100 py-3 px-4 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 flex items-center justify-between gap-2 z-10 transition-delay-0 group-hover:transition-delay-100">
+            <div className="flex items-center gap-2">
+              <MessageSquare className="w-4 h-4 text-gray-500" />
+              <span className="text-xs font-bold text-gray-700">
+                {commentCount} {commentCount === 1 ? 'Comment' : 'Comments'}
+              </span>
+            </div>
+            <div onClick={(e) => e.stopPropagation()}>
+              <MarkAsReadLaterButton articleId={article.article_id} />
+            </div>
           </div>
         </article>
       )}
@@ -106,11 +111,16 @@ export default function ArticleCard({
             )}
           </div>
           {/* Sliding Footer */}
-          <div className="absolute bottom-0 left-0 w-full bg-white/95 backdrop-blur-sm border-t border-gray-100 py-2 px-3 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 flex items-center gap-2 z-10">
-            <MessageSquare className="w-3 h-3 text-gray-500" />
-            <span className="text-[10px] font-bold text-gray-700">
-              {commentCount} {commentCount === 1 ? 'Comment' : 'Comments'}
-            </span>
+          <div className="absolute bottom-0 left-0 w-full bg-white/95 backdrop-blur-sm border-t border-gray-100 py-2 px-3 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 flex items-center justify-between gap-2 z-10 transition-delay-0 group-hover:transition-delay-100">
+            <div className="flex items-center gap-2">
+              <MessageSquare className="w-3 h-3 text-gray-500" />
+              <span className="text-[10px] font-bold text-gray-700">
+                {commentCount} {commentCount === 1 ? 'Comment' : 'Comments'}
+              </span>
+            </div>
+            <div onClick={(e) => e.stopPropagation()}>
+              <MarkAsReadLaterButton articleId={article.article_id} size="sm" />
+            </div>
           </div>
         </article>
       )}
@@ -150,11 +160,16 @@ export default function ArticleCard({
             )}
           </div>
           {/* Sliding Footer */}
-          <div className="absolute bottom-0 left-0 w-full bg-white/95 backdrop-blur-sm border-t border-gray-100 py-3 px-4 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 flex items-center gap-2 z-10">
-            <MessageSquare className="w-4 h-4 text-gray-500" />
-            <span className="text-xs font-bold text-gray-700">
-              {commentCount} {commentCount === 1 ? 'Comment' : 'Comments'}
-            </span>
+          <div className="absolute bottom-0 left-0 w-full bg-white/95 backdrop-blur-sm border-t border-gray-100 py-3 px-4 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 flex items-center justify-between gap-2 z-10 transition-delay-0 group-hover:transition-delay-100">
+            <div className="flex items-center gap-2">
+              <MessageSquare className="w-4 h-4 text-gray-500" />
+              <span className="text-xs font-bold text-gray-700">
+                {commentCount} {commentCount === 1 ? 'Comment' : 'Comments'}
+              </span>
+            </div>
+            <div onClick={(e) => e.stopPropagation()}>
+              <MarkAsReadLaterButton articleId={article.article_id} />
+            </div>
           </div>
         </article>
       )}
@@ -165,6 +180,82 @@ export default function ArticleCard({
         onClose={() => setIsOpen(false)}
       />
     </>
+  );
+}
+
+function MarkAsReadLaterButton({ articleId, size = "md" }: { articleId: bigint; size?: "sm" | "md" }) {
+  const { user, isAuthenticated } = useAuth();
+  const [isMarked, setIsMarked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isAuthenticated || !user) return;
+
+    const checkStatus = async () => {
+      try {
+        const res = await fetch(`/api/articles/marked?userId=${user.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          const markedIds = data.markedArticles.map((m: any) => m.article_id);
+          setIsMarked(markedIds.includes(articleId.toString()));
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    checkStatus();
+
+  }, [articleId, user, isAuthenticated]);
+
+  const toggleMark = async () => {
+    if (!isAuthenticated || !user) {
+      alert("Please sign in to save articles.");
+      return;
+    }
+
+    setIsLoading(true);
+    const action = isMarked ? 'unmark' : 'mark';
+
+    try {
+      const res = await fetch('/api/articles/mark', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, articleId: articleId.toString(), action }),
+      });
+
+      if (res.ok) {
+        setIsMarked(!isMarked);
+      } else {
+        console.error("Failed to update mark status");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const iconSize = size === "sm" ? "w-3 h-3" : "w-4 h-4";
+
+  return (
+    <button
+      onClick={toggleMark}
+      disabled={isLoading}
+      className="flex items-center gap-1 text-gray-500 hover:text-black transition-colors"
+      title={isMarked ? "Remove from Read Later" : "Save for Read Later"}
+    >
+      {isMarked ? (
+        <>
+          <BookmarkCheck className={`${iconSize} fill-current text-black`} />
+          <span className={`font-bold ${size === "sm" ? "text-[10px]" : "text-xs"} text-black`}>Saved</span>
+        </>
+      ) : (
+        <>
+          <Bookmark className={iconSize} />
+          <span className={`font-bold ${size === "sm" ? "text-[10px]" : "text-xs"}`}>Save</span>
+        </>
+      )}
+    </button>
   );
 }
 

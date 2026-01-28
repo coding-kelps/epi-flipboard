@@ -30,3 +30,14 @@ model Comment {
   @@map("comments")
   @@index([articleId])
 }
+
+model MarkedArticle {
+  id        Int      @id @default(autoincrement()) @map("id")
+  userId    Int      @map("user_id")
+  articleId BigInt   @map("article_id")
+  createdAt DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@map("marked_articles")
+  @@unique([userId, articleId])
+  @@index([userId])
+}

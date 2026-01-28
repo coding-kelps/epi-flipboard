@@ -385,7 +385,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   Feed: 'Feed',
-  Comment: 'Comment'
+  Comment: 'Comment',
+  MarkedArticle: 'MarkedArticle'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -401,7 +402,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "feed" | "comment"
+    modelProps: "feed" | "comment" | "markedArticle"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -553,6 +554,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MarkedArticle: {
+      payload: Prisma.$MarkedArticlePayload<ExtArgs>
+      fields: Prisma.MarkedArticleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MarkedArticleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarkedArticlePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MarkedArticleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarkedArticlePayload>
+        }
+        findFirst: {
+          args: Prisma.MarkedArticleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarkedArticlePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MarkedArticleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarkedArticlePayload>
+        }
+        findMany: {
+          args: Prisma.MarkedArticleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarkedArticlePayload>[]
+        }
+        create: {
+          args: Prisma.MarkedArticleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarkedArticlePayload>
+        }
+        createMany: {
+          args: Prisma.MarkedArticleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MarkedArticleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarkedArticlePayload>[]
+        }
+        delete: {
+          args: Prisma.MarkedArticleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarkedArticlePayload>
+        }
+        update: {
+          args: Prisma.MarkedArticleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarkedArticlePayload>
+        }
+        deleteMany: {
+          args: Prisma.MarkedArticleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MarkedArticleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MarkedArticleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarkedArticlePayload>[]
+        }
+        upsert: {
+          args: Prisma.MarkedArticleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarkedArticlePayload>
+        }
+        aggregate: {
+          args: Prisma.MarkedArticleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMarkedArticle>
+        }
+        groupBy: {
+          args: Prisma.MarkedArticleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MarkedArticleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MarkedArticleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MarkedArticleCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -614,6 +689,16 @@ export const CommentScalarFieldEnum = {
 } as const
 
 export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
+
+
+export const MarkedArticleScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  articleId: 'articleId',
+  createdAt: 'createdAt'
+} as const
+
+export type MarkedArticleScalarFieldEnum = (typeof MarkedArticleScalarFieldEnum)[keyof typeof MarkedArticleScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -812,6 +897,7 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
   feed?: Prisma.FeedOmit
   comment?: Prisma.CommentOmit
+  markedArticle?: Prisma.MarkedArticleOmit
 }
 
 /* Types for Logging */
