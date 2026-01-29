@@ -111,6 +111,7 @@ export const FollowedFeedScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   feedId: 'feedId',
+  lastVisit: 'lastVisit',
   createdAt: 'createdAt'
 } as const
 

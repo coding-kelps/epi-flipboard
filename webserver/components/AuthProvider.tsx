@@ -3,6 +3,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import AuthModal from '@/components/AuthModal';
 
 interface User {
     id: number;
@@ -17,6 +18,8 @@ interface AuthContextType {
     logout: () => void;
     refreshUser: () => Promise<void>;
     isAuthenticated: boolean;
+    openAuthModal: () => void;
+    closeAuthModal: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -26,11 +29,14 @@ const AuthContext = createContext<AuthContextType>({
     logout: () => { },
     refreshUser: async () => { },
     isAuthenticated: false,
+    openAuthModal: () => { },
+    closeAuthModal: () => { },
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const router = useRouter();
 
     const refreshUser = async () => {
@@ -68,9 +74,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const openAuthModal = () => setIsAuthModalOpen(true);
+    const closeAuthModal = () => setIsAuthModalOpen(false);
+
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout, refreshUser, isAuthenticated: !!user }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, refreshUser, isAuthenticated: !!user, openAuthModal, closeAuthModal }}>
             {children}
+            <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
         </AuthContext.Provider>
     );
 }

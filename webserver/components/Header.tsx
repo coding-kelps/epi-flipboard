@@ -3,13 +3,11 @@
 import Link from "next/link";
 import { Search, User as UserIcon } from "lucide-react";
 import { useState } from "react";
-import AuthModal from "@/components/AuthModal";
 import { useAuth } from "@/components/AuthProvider";
 import { useRouter } from 'next/navigation';
 
 export default function Header() {
-    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-    const { user } = useAuth();
+    const { user, openAuthModal } = useAuth();
     const [searchQuery, setSearchQuery] = useState("");
     const router = useRouter();
 
@@ -67,14 +65,11 @@ export default function Header() {
                                 <UserIcon className="w-5 h-5" />
                                 {user.name || 'Profile'}
                             </Link>
-                            <Link href="/feeds" className="text-sm font-medium text-gray-900 hover:text-gray-700">
-                                My Feeds
-                            </Link>
                         </>
 
                     ) : (
                         <button
-                            onClick={() => setIsAuthModalOpen(true)}
+                            onClick={openAuthModal}
                             className="bg-black text-white px-4 py-2 rounded text-sm font-medium hover:bg-gray-800 transition-colors"
                         >
                             Login / Sign up
@@ -82,7 +77,6 @@ export default function Header() {
                     )}
                 </div>
             </div>
-            <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
         </header>
     );
 }

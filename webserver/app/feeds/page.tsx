@@ -4,6 +4,7 @@ import { verifyToken } from "@/lib/auth";
 import { cookies } from "next/headers";
 // Actually, since the modal is client side, we can just wrap the button and modal in a Client Component.
 import FeedsClientWrapper from "@/components/FeedsClientWrapper";
+import AuthGuard from "@/components/AuthGuard";
 import { Newspaper } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -35,12 +36,12 @@ async function getUserFeeds() {
 export default async function FeedsPage() {
     const feeds = await getUserFeeds();
 
-    if (!feeds) {
-        redirect('/');
-    }
+    // If no feeds (likely unauthenticated), we pass empty array.
+    // AuthGuard will handle the popup.
+    const safeFeeds = feeds || [];
 
     // Serialize dates and BigInts for client use
-    const serializedFeeds = feeds.map(feed => ({
+    const serializedFeeds = safeFeeds.map(feed => ({
         ...feed,
         tagIds: feed.tagIds.map(id => Number(id)),
         publisherIds: feed.publisherIds.map(id => Number(id)),
@@ -49,8 +50,10 @@ export default async function FeedsPage() {
     }));
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            <FeedsClientWrapper initialFeeds={serializedFeeds} />
-        </div>
+        <AuthGuard>
+            <div className="container mx-auto px-4 py-8">
+                <FeedsClientWrapper initialFeeds={serializedFeeds} />
+            </div>
+        </AuthGuard>
     );
 }

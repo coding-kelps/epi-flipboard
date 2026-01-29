@@ -8,6 +8,8 @@ import { notFound } from "next/navigation";
 import { Tag } from "lucide-react";
 import FollowButton from "@/components/FollowButton";
 import { getIsFollowingFeed } from "@/app/actions";
+import { updateFeedLastVisit } from "@/lib/feed-activity";
+import { getSession } from "@/lib/auth";
 
 export const dynamic = 'force-dynamic';
 
@@ -84,6 +86,12 @@ export default async function FeedPage({ params }: FeedPageProps) {
     const tags = await getTagsByIds(feed.tagIds);
     const publishers = await getPublishersByIds(feed.publisherIds);
     const articles = await getArticlesByTags(feed.tagIds, feed.publisherIds);
+
+    // Update last visit
+    const session = await getSession();
+    if (session && session.user) {
+        await updateFeedLastVisit(Number(session.user.id), feed.id);
+    }
 
     // --- Reuse display logic from app/page.tsx ---
 

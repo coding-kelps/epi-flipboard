@@ -149,7 +149,49 @@ export async function getArticlesByIds(ids: bigint[]): Promise<Article[]> {
     });
     return articles;
   } catch (error) {
-    console.error("Failed to fetch articles by ids:", error);
     return [];
+  }
+}
+
+export async function countNewArticles(
+  tagIds: bigint[],
+  publisherIds: bigint[],
+  since: Date
+): Promise<number> {
+  const prismaContent = getPrismaContent();
+  try {
+    const count = await prismaContent.articles.count({
+      where: {
+        AND: [
+          {
+            published_at: {
+              gt: since,
+            },
+          },
+          tagIds.length > 0
+            ? {
+              article_tag: {
+                some: {
+                  tag_id: {
+                    in: tagIds,
+                  },
+                },
+              },
+            }
+            : {},
+          publisherIds.length > 0
+            ? {
+              publisher_id: {
+                in: publisherIds,
+              },
+            }
+            : {},
+        ],
+      },
+    });
+    return count;
+  } catch (error) {
+    console.error("Failed to count new articles:", error);
+    return 0;
   }
 }

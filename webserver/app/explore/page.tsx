@@ -13,7 +13,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
     const { q } = await searchParams;
     const query = typeof q === 'string' ? q : '';
 
-    const feeds = await searchFeeds(query);
+    const feeds = await searchFeeds(query, 9);
 
     return (
         <div className="container mx-auto px-4 py-12">

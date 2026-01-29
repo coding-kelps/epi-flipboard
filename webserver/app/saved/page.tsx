@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import ArticleCard from "@/components/ArticleCard";
+import AuthGuard from "@/components/AuthGuard";
 import { Article } from "@/lib/articles";
 import { Loader2 } from "lucide-react";
 
@@ -47,36 +48,27 @@ export default function MarkedArticlesPage() {
         );
     }
 
-    if (!isAuthenticated) {
-        return (
-            <div className="container max-w-2xl mx-auto px-4 py-8">
-                <h1 className="text-3xl font-serif font-bold mb-6">Read Later</h1>
-                <div className="p-8 bg-gray-50 rounded-lg text-center">
-                    <p className="text-gray-600 mb-4">Please sign in to view your saved articles.</p>
-                </div>
-            </div>
-        )
-    }
-
     return (
-        <div className="container max-w-2xl mx-auto px-4 py-8">
-            <h1 className="text-3xl font-serif font-bold mb-8">Read Later</h1>
+        <AuthGuard>
+            <div className="container max-w-2xl mx-auto px-4 py-8">
+                <h1 className="text-3xl font-serif font-bold mb-8">Read Later</h1>
 
-            {articles.length === 0 ? (
-                <div className="p-8 bg-gray-50 rounded-lg text-center border border-gray-100">
-                    <p className="text-gray-600">You haven't saved any articles yet.</p>
-                </div>
-            ) : (
-                <div className="flex flex-col">
-                    {articles.map((article) => (
-                        <ArticleCard
-                            key={article.article_id}
-                            article={article}
-                            variant="compact"
-                        />
-                    ))}
-                </div>
-            )}
-        </div>
+                {articles.length === 0 ? (
+                    <div className="p-8 bg-gray-50 rounded-lg text-center border border-gray-100">
+                        <p className="text-gray-600">You haven't saved any articles yet.</p>
+                    </div>
+                ) : (
+                    <div className="flex flex-col">
+                        {articles.map((article) => (
+                            <ArticleCard
+                                key={article.article_id}
+                                article={article}
+                                variant="compact"
+                            />
+                        ))}
+                    </div>
+                )}
+            </div>
+        </AuthGuard>
     );
 }

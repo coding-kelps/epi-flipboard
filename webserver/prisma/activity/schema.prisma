@@ -46,7 +46,8 @@ model FollowedFeed {
   id        Int      @id @default(autoincrement())
   userId    Int      @map("user_id")
   feedId    Int      @map("feed_id")
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  lastVisit DateTime @default(now()) @db.Timestamptz(6) @map("last_visit")
+  createdAt DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
 
   @@unique([userId, feedId])
   @@map("followed_feeds")

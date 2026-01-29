@@ -1,12 +1,26 @@
+
 import { getArticles } from "@/lib/articles";
 import ArticleCard from "@/components/ArticleCard";
+import HomepageNav from "@/components/HomepageNav";
 import { checkImageResolution } from "@/lib/image-utils";
 import { Article } from "@/lib/articles";
+import { getSession } from "@/lib/auth";
+import { getFollowedFeedsWithMetadata, FollowedFeedWithMetadata } from "@/lib/feed-activity";
+import FeedUpdateItem from "@/components/FeedUpdateItem";
+import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
+  const session = await getSession();
   const articles = await getArticles();
+
+  let followedFeeds: FollowedFeedWithMetadata[] = [];
+  if (session && session.user) {
+    followedFeeds = await getFollowedFeedsWithMetadata(Number(session.user.id));
+    followedFeeds.sort((a, b) => b.newArticlesCount - a.newArticlesCount);
+    followedFeeds = followedFeeds.slice(0, 5);
+  }
 
   if (!articles || articles.length === 0) {
     return (
@@ -46,27 +60,23 @@ export default async function Home() {
 
   // Separate articles with and without images
   const articlesWithImages = otherArticles.filter((a) => a.image_url);
-  const articlesWithoutImages = otherArticles.filter((a) => !a.image_url);
 
-  // Distribute remaining articles - prioritize articles with images for visual sections
-  const secondaryLead = otherArticles[0];
+  // topStories: Get 4 articles with images (after secondary lead)
+  const topStories = articlesWithImages.slice(0, 2);
 
-  // topStories: Get 3 articles with images (after secondary lead)
-  const topStories = articlesWithImages.slice(1, 4);
+  // "The Latest" section: Dynamic count to fill space based on followed feeds
+  // Aim for a consistent total number of items in the sidebar (feeds + articles)
+  // Base count of 12 items total seems to balance the center column well.
+  const sidebarCount = 12 - followedFeeds.length;
+  const sidebarStories = otherArticles.slice(4, 4 + sidebarCount);
 
-  // "The Latest" section: 13 articles (can be mixed)
-  const sidebarStories = otherArticles.slice(4, 17);
-
-  // opinionStories: Get 3 articles with images (from remaining articles with images)
-  const opinionStories = articlesWithImages.slice(4, 7);
 
   // "More News" section: min/max 4 articles with images (from remaining articles)
   const usedIds = new Set([
     leadStory!.article_id,
-    secondaryLead?.article_id,
     ...topStories.map(a => a.article_id),
     ...sidebarStories.map(a => a.article_id),
-    ...opinionStories.map(a => a.article_id),
+
   ].filter(Boolean));
 
   const moreNews = articlesWithImages
@@ -78,14 +88,31 @@ export default async function Home() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 divide-y lg:divide-y-0 lg:divide-x divide-gray-200">
 
         {/* Left Column: Quick News / Sidebar (Span 3) */}
-        <section className="lg:col-span-3 lg:pr-6 order-2 lg:order-1 flex flex-col gap-4">
-          <h4 className="font-bold text-xs uppercase tracking-wider text-gray-900 mb-2 border-t border-black pt-1">
-            The Latest
-          </h4>
+        <section className="lg:col-span-3 lg:pr-6 order-2 lg:order-1 flex flex-col gap-8">
+
+          {/* Feed Updates Section */}
+          {followedFeeds.length > 0 && (
+            <div className="flex flex-col gap-4">
+              <h4 className="font-bold text-xs uppercase tracking-wider text-gray-900 mb-2 border-t border-black pt-1">
+                Updates for You
+              </h4>
+              <div className="flex flex-col gap-4">
+                {followedFeeds.map((feed) => (
+                  <FeedUpdateItem key={feed.id} feed={feed} />
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col gap-4">
-            {sidebarStories.map((article) => (
-              <ArticleCard key={String(article.article_id)} article={article} variant="compact" />
-            ))}
+            <h4 className="font-bold text-xs uppercase tracking-wider text-gray-900 mb-2 border-t border-black pt-1">
+              The Latest
+            </h4>
+            <div className="flex flex-col gap-4">
+              {sidebarStories.map((article) => (
+                <ArticleCard key={String(article.article_id)} article={article} variant="compact" />
+              ))}
+            </div>
           </div>
         </section>
 
@@ -101,9 +128,6 @@ export default async function Home() {
 
           {/* Secondary Lead & Top Stories Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {secondaryLead && (
-              <ArticleCard article={secondaryLead} variant="standard" />
-            )}
             {topStories.map((article) => (
               <ArticleCard key={String(article.article_id)} article={article} variant="standard" />
             ))}
@@ -112,16 +136,12 @@ export default async function Home() {
         </section>
 
 
-        {/* Right Column: Opinion / More (Span 3) */}
+        {/* Right Column: Discover / Navigation (Span 3) */}
         <section className="lg:col-span-3 lg:pl-6 order-3 flex flex-col gap-6">
           <h4 className="font-bold text-xs uppercase tracking-wider text-gray-900 mb-2 border-t border-black pt-1">
-            Opinion & Features
+            Discover
           </h4>
-          <div className="flex flex-col gap-7">
-            {opinionStories.map((article) => (
-              <ArticleCard key={String(article.article_id)} article={article} variant="standard" />
-            ))}
-          </div>
+          <HomepageNav />
         </section>
 
       </div>

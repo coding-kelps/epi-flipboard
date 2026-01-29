@@ -42,6 +42,7 @@ export type FollowedFeedMinAggregateOutputType = {
   id: number | null
   userId: number | null
   feedId: number | null
+  lastVisit: Date | null
   createdAt: Date | null
 }
 
@@ -49,6 +50,7 @@ export type FollowedFeedMaxAggregateOutputType = {
   id: number | null
   userId: number | null
   feedId: number | null
+  lastVisit: Date | null
   createdAt: Date | null
 }
 
@@ -56,6 +58,7 @@ export type FollowedFeedCountAggregateOutputType = {
   id: number
   userId: number
   feedId: number
+  lastVisit: number
   createdAt: number
   _all: number
 }
@@ -77,6 +80,7 @@ export type FollowedFeedMinAggregateInputType = {
   id?: true
   userId?: true
   feedId?: true
+  lastVisit?: true
   createdAt?: true
 }
 
@@ -84,6 +88,7 @@ export type FollowedFeedMaxAggregateInputType = {
   id?: true
   userId?: true
   feedId?: true
+  lastVisit?: true
   createdAt?: true
 }
 
@@ -91,6 +96,7 @@ export type FollowedFeedCountAggregateInputType = {
   id?: true
   userId?: true
   feedId?: true
+  lastVisit?: true
   createdAt?: true
   _all?: true
 }
@@ -185,6 +191,7 @@ export type FollowedFeedGroupByOutputType = {
   id: number
   userId: number
   feedId: number
+  lastVisit: Date
   createdAt: Date
   _count: FollowedFeedCountAggregateOutputType | null
   _avg: FollowedFeedAvgAggregateOutputType | null
@@ -215,6 +222,7 @@ export type FollowedFeedWhereInput = {
   id?: Prisma.IntFilter<"FollowedFeed"> | number
   userId?: Prisma.IntFilter<"FollowedFeed"> | number
   feedId?: Prisma.IntFilter<"FollowedFeed"> | number
+  lastVisit?: Prisma.DateTimeFilter<"FollowedFeed"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"FollowedFeed"> | Date | string
 }
 
@@ -222,6 +230,7 @@ export type FollowedFeedOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   feedId?: Prisma.SortOrder
+  lastVisit?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -233,6 +242,7 @@ export type FollowedFeedWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.FollowedFeedWhereInput | Prisma.FollowedFeedWhereInput[]
   userId?: Prisma.IntFilter<"FollowedFeed"> | number
   feedId?: Prisma.IntFilter<"FollowedFeed"> | number
+  lastVisit?: Prisma.DateTimeFilter<"FollowedFeed"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"FollowedFeed"> | Date | string
 }, "id" | "userId_feedId">
 
@@ -240,6 +250,7 @@ export type FollowedFeedOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   feedId?: Prisma.SortOrder
+  lastVisit?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.FollowedFeedCountOrderByAggregateInput
   _avg?: Prisma.FollowedFeedAvgOrderByAggregateInput
@@ -255,12 +266,14 @@ export type FollowedFeedScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"FollowedFeed"> | number
   userId?: Prisma.IntWithAggregatesFilter<"FollowedFeed"> | number
   feedId?: Prisma.IntWithAggregatesFilter<"FollowedFeed"> | number
+  lastVisit?: Prisma.DateTimeWithAggregatesFilter<"FollowedFeed"> | Date | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"FollowedFeed"> | Date | string
 }
 
 export type FollowedFeedCreateInput = {
   userId: number
   feedId: number
+  lastVisit?: Date | string
   createdAt?: Date | string
 }
 
@@ -268,12 +281,14 @@ export type FollowedFeedUncheckedCreateInput = {
   id?: number
   userId: number
   feedId: number
+  lastVisit?: Date | string
   createdAt?: Date | string
 }
 
 export type FollowedFeedUpdateInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   feedId?: Prisma.IntFieldUpdateOperationsInput | number
+  lastVisit?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -281,6 +296,7 @@ export type FollowedFeedUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   feedId?: Prisma.IntFieldUpdateOperationsInput | number
+  lastVisit?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -288,12 +304,14 @@ export type FollowedFeedCreateManyInput = {
   id?: number
   userId: number
   feedId: number
+  lastVisit?: Date | string
   createdAt?: Date | string
 }
 
 export type FollowedFeedUpdateManyMutationInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   feedId?: Prisma.IntFieldUpdateOperationsInput | number
+  lastVisit?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -301,6 +319,7 @@ export type FollowedFeedUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   feedId?: Prisma.IntFieldUpdateOperationsInput | number
+  lastVisit?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -313,6 +332,7 @@ export type FollowedFeedCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   feedId?: Prisma.SortOrder
+  lastVisit?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -326,6 +346,7 @@ export type FollowedFeedMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   feedId?: Prisma.SortOrder
+  lastVisit?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -333,6 +354,7 @@ export type FollowedFeedMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   feedId?: Prisma.SortOrder
+  lastVisit?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -348,6 +370,7 @@ export type FollowedFeedSelect<ExtArgs extends runtime.Types.Extensions.Internal
   id?: boolean
   userId?: boolean
   feedId?: boolean
+  lastVisit?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["followedFeed"]>
 
@@ -355,6 +378,7 @@ export type FollowedFeedSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   id?: boolean
   userId?: boolean
   feedId?: boolean
+  lastVisit?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["followedFeed"]>
 
@@ -362,6 +386,7 @@ export type FollowedFeedSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   id?: boolean
   userId?: boolean
   feedId?: boolean
+  lastVisit?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["followedFeed"]>
 
@@ -369,10 +394,11 @@ export type FollowedFeedSelectScalar = {
   id?: boolean
   userId?: boolean
   feedId?: boolean
+  lastVisit?: boolean
   createdAt?: boolean
 }
 
-export type FollowedFeedOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "feedId" | "createdAt", ExtArgs["result"]["followedFeed"]>
+export type FollowedFeedOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "feedId" | "lastVisit" | "createdAt", ExtArgs["result"]["followedFeed"]>
 
 export type $FollowedFeedPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "FollowedFeed"
@@ -381,6 +407,7 @@ export type $FollowedFeedPayload<ExtArgs extends runtime.Types.Extensions.Intern
     id: number
     userId: number
     feedId: number
+    lastVisit: Date
     createdAt: Date
   }, ExtArgs["result"]["followedFeed"]>
   composites: {}
@@ -808,6 +835,7 @@ export interface FollowedFeedFieldRefs {
   readonly id: Prisma.FieldRef<"FollowedFeed", 'Int'>
   readonly userId: Prisma.FieldRef<"FollowedFeed", 'Int'>
   readonly feedId: Prisma.FieldRef<"FollowedFeed", 'Int'>
+  readonly lastVisit: Prisma.FieldRef<"FollowedFeed", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"FollowedFeed", 'DateTime'>
 }
     

@@ -184,7 +184,7 @@ export default function ArticleCard({
 }
 
 function MarkAsReadLaterButton({ articleId, size = "md" }: { articleId: bigint; size?: "sm" | "md" }) {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, openAuthModal } = useAuth();
   const [isMarked, setIsMarked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -209,7 +209,7 @@ function MarkAsReadLaterButton({ articleId, size = "md" }: { articleId: bigint; 
 
   const toggleMark = async () => {
     if (!isAuthenticated || !user) {
-      alert("Please sign in to save articles.");
+      openAuthModal();
       return;
     }
 
@@ -445,7 +445,7 @@ interface ArticleComment {
 }
 
 function CommentsSection({ articleId }: { articleId: bigint }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, openAuthModal } = useAuth();
   const [comments, setComments] = useState<ArticleComment[]>([]);
   const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState("");
@@ -514,7 +514,10 @@ function CommentsSection({ articleId }: { articleId: bigint }) {
         </form>
       ) : (
         <div className="p-4 bg-gray-50 rounded-md text-center text-sm text-gray-600">
-          Please <span className="font-bold text-black">sign in</span> to leave a comment.
+          <button onClick={openAuthModal} className="font-bold text-black hover:underline">
+            Sign in
+          </button>{" "}
+          to leave a comment.
         </div>
       )}
 

@@ -42,7 +42,7 @@ export async function toggleFollowFeed(feedId: number) {
 }
 
 
-export async function searchFeeds(query: string) {
+export async function searchFeeds(query: string, limit: number = 20) {
     const prisma = getPrismaActivity();
 
     if (!query || query.trim() === '') {
@@ -52,7 +52,7 @@ export async function searchFeeds(query: string) {
             orderBy: {
                 createdAt: 'desc'
             },
-            take: 20
+            take: limit
         });
         return feeds.map(feed => ({
             ...feed,
@@ -79,7 +79,7 @@ export async function searchFeeds(query: string) {
                 }
             ]
         },
-        take: 20
+        take: limit
     });
 
     return feeds.map(feed => ({
