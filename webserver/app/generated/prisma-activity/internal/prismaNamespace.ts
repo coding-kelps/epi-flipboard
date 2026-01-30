@@ -387,7 +387,8 @@ export const ModelName = {
   Feed: 'Feed',
   Comment: 'Comment',
   MarkedArticle: 'MarkedArticle',
-  FollowedFeed: 'FollowedFeed'
+  FollowedFeed: 'FollowedFeed',
+  ReadingHistory: 'ReadingHistory'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -403,7 +404,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "feed" | "comment" | "markedArticle" | "followedFeed"
+    modelProps: "feed" | "comment" | "markedArticle" | "followedFeed" | "readingHistory"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -703,6 +704,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ReadingHistory: {
+      payload: Prisma.$ReadingHistoryPayload<ExtArgs>
+      fields: Prisma.ReadingHistoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ReadingHistoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReadingHistoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ReadingHistoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReadingHistoryPayload>
+        }
+        findFirst: {
+          args: Prisma.ReadingHistoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReadingHistoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ReadingHistoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReadingHistoryPayload>
+        }
+        findMany: {
+          args: Prisma.ReadingHistoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReadingHistoryPayload>[]
+        }
+        create: {
+          args: Prisma.ReadingHistoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReadingHistoryPayload>
+        }
+        createMany: {
+          args: Prisma.ReadingHistoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ReadingHistoryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReadingHistoryPayload>[]
+        }
+        delete: {
+          args: Prisma.ReadingHistoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReadingHistoryPayload>
+        }
+        update: {
+          args: Prisma.ReadingHistoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReadingHistoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.ReadingHistoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ReadingHistoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ReadingHistoryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReadingHistoryPayload>[]
+        }
+        upsert: {
+          args: Prisma.ReadingHistoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReadingHistoryPayload>
+        }
+        aggregate: {
+          args: Prisma.ReadingHistoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateReadingHistory>
+        }
+        groupBy: {
+          args: Prisma.ReadingHistoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReadingHistoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ReadingHistoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReadingHistoryCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -785,6 +860,16 @@ export const FollowedFeedScalarFieldEnum = {
 } as const
 
 export type FollowedFeedScalarFieldEnum = (typeof FollowedFeedScalarFieldEnum)[keyof typeof FollowedFeedScalarFieldEnum]
+
+
+export const ReadingHistoryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  articleId: 'articleId',
+  readAt: 'readAt'
+} as const
+
+export type ReadingHistoryScalarFieldEnum = (typeof ReadingHistoryScalarFieldEnum)[keyof typeof ReadingHistoryScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -985,6 +1070,7 @@ export type GlobalOmitConfig = {
   comment?: Prisma.CommentOmit
   markedArticle?: Prisma.MarkedArticleOmit
   followedFeed?: Prisma.FollowedFeedOmit
+  readingHistory?: Prisma.ReadingHistoryOmit
 }
 
 /* Types for Logging */

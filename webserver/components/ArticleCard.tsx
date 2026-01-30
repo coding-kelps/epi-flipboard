@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { X, ExternalLink, Calendar, User, Tag, MessageSquare, Bookmark, BookmarkCheck } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 
-export type ArticleVariant = "lead" | "standard" | "compact";
+export type ArticleVariant = "lead" | "standard" | "compact" | "list";
 
 interface ArticleCardProps {
   article: Article;
@@ -20,6 +20,7 @@ export default function ArticleCard({
   variant = "standard",
   className,
 }: ArticleCardProps) {
+  const { user, isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [commentCount, setCommentCount] = useState<number>(0);
 
@@ -41,8 +42,16 @@ export default function ArticleCard({
   const publisherText = publisherName ? `By ${publisherName}` : null;
 
   const handleCardClick = () => {
-    // Allow default behavior for elements that should act natively (like buttons if we added any)
-    // But for now, we want the card to open sidebar.
+    // Record history if user is authenticated (handled by API check, but good to fire and forget)
+    // We don't want to block UI, so we don't await
+    if (isAuthenticated && user) {
+      fetch('/api/history/record', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ articleId: article.article_id.toString() })
+      }).catch(err => console.error("Failed to record history", err));
+    }
+
     setIsOpen(true);
   };
 
@@ -120,6 +129,49 @@ export default function ArticleCard({
             </div>
             <div onClick={(e) => e.stopPropagation()}>
               <MarkAsReadLaterButton articleId={article.article_id} size="sm" />
+            </div>
+          </div>
+        </article>
+      )}
+
+      {variant === "list" && (
+        <article
+          onClick={handleCardClick}
+          className={cn(
+            "flex gap-4 py-4 border-b border-gray-100 last:border-0 group cursor-pointer relative overflow-hidden items-start",
+            className
+          )}
+        >
+          {hasImage && (
+            <div className="relative w-24 h-24 md:w-32 md:h-24 shrink-0 overflow-hidden rounded-md bg-gray-100">
+              <Image
+                src={article.image_url!}
+                alt={article.title}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                sizes="(max-width: 768px) 96px, 128px"
+              />
+            </div>
+          )}
+          <div className="flex flex-col gap-1.5 flex-grow min-w-0">
+            <div className="flex items-center gap-2 text-[10px] font-bold tracking-wider uppercase text-gray-400">
+              {publisherText && <span>{publisherText}</span>}
+              <span>•</span>
+              <span>{new Date(article.published_at).toLocaleDateString()}</span>
+            </div>
+
+            <h3 className="text-base md:text-lg font-serif font-bold leading-tight text-gray-900 group-hover:text-gray-700 line-clamp-2 md:line-clamp-none">
+              {article.title}
+            </h3>
+
+            <div className="flex items-center gap-4 mt-auto pt-1">
+              <div className="flex items-center gap-1.5 text-gray-400">
+                <MessageSquare className="w-3 h-3" />
+                <span className="text-[10px] font-medium">{commentCount}</span>
+              </div>
+              <div onClick={(e) => e.stopPropagation()}>
+                <MarkAsReadLaterButton articleId={article.article_id} size="sm" />
+              </div>
             </div>
           </div>
         </article>

@@ -26,7 +26,7 @@ export default function HomepageNav() {
             <NavCard
                 title="Saved"
                 description="Read your bookmarked stories."
-                href="/marked"
+                href="/saved"
                 icon={Bookmark}
                 colorClass="bg-gray-100"
                 iconClassName="text-gray-700"

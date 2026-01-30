@@ -54,7 +54,8 @@ export const ModelName = {
   Feed: 'Feed',
   Comment: 'Comment',
   MarkedArticle: 'MarkedArticle',
-  FollowedFeed: 'FollowedFeed'
+  FollowedFeed: 'FollowedFeed',
+  ReadingHistory: 'ReadingHistory'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -116,6 +117,16 @@ export const FollowedFeedScalarFieldEnum = {
 } as const
 
 export type FollowedFeedScalarFieldEnum = (typeof FollowedFeedScalarFieldEnum)[keyof typeof FollowedFeedScalarFieldEnum]
+
+
+export const ReadingHistoryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  articleId: 'articleId',
+  readAt: 'readAt'
+} as const
+
+export type ReadingHistoryScalarFieldEnum = (typeof ReadingHistoryScalarFieldEnum)[keyof typeof ReadingHistoryScalarFieldEnum]
 
 
 export const SortOrder = {

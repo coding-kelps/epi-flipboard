@@ -37,3 +37,8 @@ export type MarkedArticle = Prisma.MarkedArticleModel
  * 
  */
 export type FollowedFeed = Prisma.FollowedFeedModel
+/**
+ * Model ReadingHistory
+ * 
+ */
+export type ReadingHistory = Prisma.ReadingHistoryModel

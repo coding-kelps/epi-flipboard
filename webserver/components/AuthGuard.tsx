@@ -42,7 +42,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         // Let's render a restricted view placeholder if we want to be strict,
         // or just render children if the page handles it.
         // Given existing pages like `/feeds/[feedId]` handled user check locally for `lastVisit`.
-        // `/marked` likely fetches for `userId`.
+        // `/saved` likely fetches for `userId`.
 
         // Let's return children, but maybe wrap in a div that checks?
         // Actually, if we return children, the page executes.

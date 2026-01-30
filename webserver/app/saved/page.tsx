@@ -12,6 +12,9 @@ export default function MarkedArticlesPage() {
     const { user, isAuthenticated, loading: authLoading } = useAuth();
     const [articles, setArticles] = useState<Article[]>([]);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
 
     useEffect(() => {
         if (authLoading) return;
@@ -21,24 +24,42 @@ export default function MarkedArticlesPage() {
             return;
         }
 
-        const fetchMarkedArticles = async () => {
-            try {
-                const res = await fetch(`/api/articles/marked?userId=${user.id}`);
-                if (!res.ok) throw new Error("Failed to fetch marked articles");
-                const data = await res.json();
+        // Reset state on auth change
+        setArticles([]);
+        setPage(1);
+        setLoading(true);
 
-                // API now returns full article objects in `markedArticles`
-                setArticles(data.markedArticles || []);
-
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchMarkedArticles();
+        fetchMarkedArticles(1);
     }, [user, isAuthenticated, authLoading]);
+
+    const fetchMarkedArticles = async (pageNum: number) => {
+        if (!user) return;
+        try {
+            const res = await fetch(`/api/articles/marked?userId=${user.id}&limit=9&page=${pageNum}`);
+            if (!res.ok) throw new Error("Failed to fetch marked articles");
+            const data = await res.json();
+
+            // API now returns full article objects in `markedArticles`
+            const newArticles = data.markedArticles || [];
+
+            setArticles(prev => pageNum === 1 ? newArticles : [...prev, ...newArticles]);
+            setHasMore(data.pagination?.hasMore ?? false);
+
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+            setIsLoadingMore(false);
+        }
+    };
+
+    const loadMore = () => {
+        if (!hasMore || isLoadingMore) return;
+        setIsLoadingMore(true);
+        const nextPage = page + 1;
+        setPage(nextPage);
+        fetchMarkedArticles(nextPage);
+    };
 
     if (authLoading || loading) {
         return (
@@ -58,14 +79,28 @@ export default function MarkedArticlesPage() {
                         <p className="text-gray-600">You haven't saved any articles yet.</p>
                     </div>
                 ) : (
-                    <div className="flex flex-col">
-                        {articles.map((article) => (
-                            <ArticleCard
-                                key={article.article_id}
-                                article={article}
-                                variant="compact"
-                            />
-                        ))}
+                    <div className="flex flex-col gap-8">
+                        <div className="flex flex-col">
+                            {articles.map((article, index) => (
+                                <ArticleCard
+                                    key={`${article.article_id}-${index}`}
+                                    article={article}
+                                    variant="list"
+                                />
+                            ))}
+                        </div>
+
+                        {hasMore && (
+                            <div className="flex justify-center pb-8">
+                                <button
+                                    onClick={loadMore}
+                                    disabled={isLoadingMore}
+                                    className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-sm tracking-wider uppercase rounded-full transition-colors disabled:opacity-50"
+                                >
+                                    {isLoadingMore ? "Loading..." : "Load More"}
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
