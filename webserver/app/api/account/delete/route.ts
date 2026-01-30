@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrismaIdentity } from '@/lib/prisma';
+import { getPrismaIdentity, getPrismaActivity } from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
 import { cookies } from 'next/headers';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
@@ -46,6 +46,48 @@ export async function DELETE(req: NextRequest) {
     }
 
     try {
+        const prismaActivity = getPrismaActivity();
+
+        // 1. Get all feeds created by the user to find followers
+        const userFeeds = await prismaActivity.feed.findMany({
+            where: { userId: payload.userId },
+            select: { id: true }
+        });
+        const userFeedIds = userFeeds.map(f => f.id);
+
+        // 2. Remove followers of the user's feeds
+        if (userFeedIds.length > 0) {
+            await prismaActivity.followedFeed.deleteMany({
+                where: { feedId: { in: userFeedIds } }
+            });
+        }
+
+        // 3. Delete the user's feeds
+        await prismaActivity.feed.deleteMany({
+            where: { userId: payload.userId }
+        });
+
+        // 4. Delete the user's following status (feeds they follow)
+        await prismaActivity.followedFeed.deleteMany({
+            where: { userId: payload.userId }
+        });
+
+        // 5. Delete the user's comments
+        await prismaActivity.comment.deleteMany({
+            where: { userId: payload.userId }
+        });
+
+        // 6. Delete the user's reading history
+        await prismaActivity.readingHistory.deleteMany({
+            where: { userId: payload.userId }
+        });
+
+        // 7. Delete the user's marked (saved) articles
+        await prismaActivity.markedArticle.deleteMany({
+            where: { userId: payload.userId }
+        });
+
+        // 8. Finally, delete the user account
         await prismaIdentity.user.delete({
             where: { id: user.id },
         });
@@ -55,6 +97,7 @@ export async function DELETE(req: NextRequest) {
 
         return NextResponse.json({ success: true, message: 'Account deleted' });
     } catch (error) {
+        console.error("Error deleting account:", error);
         span?.recordException(error as Error);
         span?.setStatus({ code: SpanStatusCode.ERROR, message: 'Deletion failed' });
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
