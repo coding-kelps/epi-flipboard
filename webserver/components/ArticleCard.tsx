@@ -22,19 +22,18 @@ export default function ArticleCard({
 }: ArticleCardProps) {
   const { user, isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [commentCount, setCommentCount] = useState<number>(0);
+  // Use passed count or default to 0
+  const [commentCount, setCommentCount] = useState<number>(article._count?.comments || 0);
 
+  // Update effect only if we want to support real-time updates, otherwise we can rely on initial prop.
+  // We can probably trust the server-side fetched count for the view.
+  // If we really want to fetch fresh on client, we can keep it, but the goal was optimization.
+  // Let's rely on server data for initial rendering.
   useEffect(() => {
-    // Fetch comment count
-    fetch(`/api/comments?articleId=${article.article_id}&count=true`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.count !== undefined) {
-          setCommentCount(data.count);
-        }
-      })
-      .catch(err => console.error("Failed to fetch comment count", err));
-  }, [article.article_id]);
+    if (article._count?.comments !== undefined) {
+      setCommentCount(article._count.comments);
+    }
+  }, [article._count?.comments]);
 
   const hasImage = !!article.image_url;
   // Publisher name
@@ -95,7 +94,7 @@ export default function ArticleCard({
               </span>
             </div>
             <div onClick={(e) => e.stopPropagation()}>
-              <MarkAsReadLaterButton articleId={article.article_id} />
+              <MarkAsReadLaterButton articleId={article.article_id} initialIsSaved={article.isSaved} />
             </div>
           </div>
         </article>
@@ -128,7 +127,7 @@ export default function ArticleCard({
               </span>
             </div>
             <div onClick={(e) => e.stopPropagation()}>
-              <MarkAsReadLaterButton articleId={article.article_id} size="sm" />
+              <MarkAsReadLaterButton articleId={article.article_id} size="sm" initialIsSaved={article.isSaved} />
             </div>
           </div>
         </article>
@@ -170,7 +169,7 @@ export default function ArticleCard({
                 <span className="text-[10px] font-medium">{commentCount}</span>
               </div>
               <div onClick={(e) => e.stopPropagation()}>
-                <MarkAsReadLaterButton articleId={article.article_id} size="sm" />
+                <MarkAsReadLaterButton articleId={article.article_id} size="sm" initialIsSaved={article.isSaved} />
               </div>
             </div>
           </div>
@@ -220,7 +219,7 @@ export default function ArticleCard({
               </span>
             </div>
             <div onClick={(e) => e.stopPropagation()}>
-              <MarkAsReadLaterButton articleId={article.article_id} />
+              <MarkAsReadLaterButton articleId={article.article_id} initialIsSaved={article.isSaved} />
             </div>
           </div>
         </article>
@@ -235,29 +234,25 @@ export default function ArticleCard({
   );
 }
 
-function MarkAsReadLaterButton({ articleId, size = "md" }: { articleId: bigint; size?: "sm" | "md" }) {
+interface MarkAsReadLaterButtonProps {
+  articleId: bigint;
+  size?: "sm" | "md";
+  initialIsSaved?: boolean;
+}
+
+function MarkAsReadLaterButton({ articleId, size = "md", initialIsSaved = false }: MarkAsReadLaterButtonProps) {
   const { user, isAuthenticated, openAuthModal } = useAuth();
-  const [isMarked, setIsMarked] = useState(false);
+  const [isMarked, setIsMarked] = useState(initialIsSaved);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Opt-out of initial fetch to avoid N+1 queries
+  // We rely on initialIsSaved passed from server
   useEffect(() => {
-    if (!isAuthenticated || !user) return;
-
-    const checkStatus = async () => {
-      try {
-        const res = await fetch(`/api/articles/marked?userId=${user.id}`);
-        if (res.ok) {
-          const data = await res.json();
-          const markedIds = data.markedArticles.map((m: any) => m.article_id);
-          setIsMarked(markedIds.includes(articleId.toString()));
-        }
-      } catch (err) {
-        console.error(err);
-      }
+    if (isAuthenticated && user && !initialIsSaved) {
+      // Only if we suspect desync? For now, completely disable to meet optimization goal.
+      // logic kept mainly for refernece if we want to restore dynamic updates
     }
-    checkStatus();
-
-  }, [articleId, user, isAuthenticated]);
+  }, [articleId, user, isAuthenticated, initialIsSaved]);
 
   const toggleMark = async () => {
     if (!isAuthenticated || !user) {

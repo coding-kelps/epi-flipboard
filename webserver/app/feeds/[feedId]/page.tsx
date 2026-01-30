@@ -145,13 +145,9 @@ export default async function FeedPage({ params }: FeedPageProps) {
 
     // Separate articles with and without images
     const articlesWithImages = otherArticles.filter((a) => a.image_url);
-    // const articlesWithoutImages = otherArticles.filter((a) => !a.image_url); // Unused for now
-
-    // Distribute remaining articles - prioritize articles with images for visual sections
-    const secondaryLead = otherArticles[0];
 
     // topStories: Get 3 articles with images (after secondary lead)
-    const topStories = articlesWithImages.slice(1, 4);
+    const topStories = articlesWithImages.slice(0, 4);
 
     // "The Latest" section: 13 articles (can be mixed)
     const sidebarStories = otherArticles.slice(4, 17);
@@ -162,7 +158,6 @@ export default async function FeedPage({ params }: FeedPageProps) {
     // "More News" section: min/max 4 articles with images (from remaining articles)
     const usedIds = new Set([
         leadStory!.article_id,
-        secondaryLead?.article_id,
         ...topStories.map(a => a.article_id),
         ...sidebarStories.map(a => a.article_id),
         ...opinionStories.map(a => a.article_id),
@@ -226,9 +221,6 @@ export default async function FeedPage({ params }: FeedPageProps) {
 
                     {/* Secondary Lead & Top Stories Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {secondaryLead && (
-                            <ArticleCard article={secondaryLead} variant="standard" />
-                        )}
                         {topStories.map((article) => (
                             <ArticleCard key={String(article.article_id)} article={article} variant="standard" />
                         ))}

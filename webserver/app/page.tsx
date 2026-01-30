@@ -13,7 +13,8 @@ export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   const session = await getSession();
-  const articles = await getArticles();
+  const userId = session?.user?.id ? Number(session.user.id) : undefined;
+  const articles = await getArticles(userId);
 
   let followedFeeds: FollowedFeedWithMetadata[] = [];
   if (session && session.user) {

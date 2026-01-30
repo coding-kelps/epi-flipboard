@@ -58,11 +58,10 @@ export default async function SearchPage({
 
     // Filter out the lead story from the rest of the list
     const otherArticles = articles.filter((a) => a.article_id !== leadStory!.article_id);
+    const articlesWithImages = otherArticles.filter((a) => a.image_url);
 
-    // Distribute remaining articles
-    const secondaryLead = otherArticles[0];
-    const topStories = otherArticles.slice(1, 4);
-    const remaining = otherArticles.slice(4);
+    const topStories = articlesWithImages.slice(0, 4);
+    const remaining = otherArticles.slice(4, 21);
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -81,11 +80,7 @@ export default async function SearchPage({
                         className="border-b border-gray-200 pb-6"
                     />
 
-                    {/* Secondary Lead & Top Stories Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {secondaryLead && (
-                            <ArticleCard article={secondaryLead} variant="standard" />
-                        )}
                         {topStories.map((article) => (
                             <ArticleCard key={String(article.article_id)} article={article} variant="standard" />
                         ))}

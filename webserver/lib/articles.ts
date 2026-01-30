@@ -5,9 +5,14 @@ import { trace } from '@opentelemetry/api';
 
 export type Article = Prisma.articlesGetPayload<{
   include: { publishers: true; article_tag: { include: { tags: true } } };
-}>;
+}> & {
+  _count?: { comments: number };
+  isSaved?: boolean;
+};
 
-export async function getArticles(): Promise<Article[]> {
+import { getPrismaActivity } from "@/lib/prisma";
+
+export async function getArticles(userId?: number): Promise<Article[]> {
   const prismaContent = getPrismaContent();
   try {
     const articles = await prismaContent.articles.findMany({
@@ -24,14 +29,50 @@ export async function getArticles(): Promise<Article[]> {
       },
       take: 50,
     });
-    return articles;
+
+    return await enrichArticles(articles, userId);
   } catch (error) {
     console.error("Failed to fetch articles:", error);
     return [];
   }
 }
 
-export async function searchArticles(query: string): Promise<Article[]> {
+async function enrichArticles(articles: Article[], userId?: number): Promise<Article[]> {
+  const prismaActivity = getPrismaActivity();
+  const articleIds = articles.map(a => a.article_id);
+
+  if (articleIds.length === 0) return articles;
+
+  try {
+    const [commentCounts, savedArticles] = await Promise.all([
+      prismaActivity.comment.groupBy({
+        by: ['articleId'],
+        where: { articleId: { in: articleIds } },
+        _count: { id: true }
+      }),
+      userId ? prismaActivity.markedArticle.findMany({
+        where: { userId: userId, articleId: { in: articleIds } },
+        select: { articleId: true }
+      }) : Promise.resolve([])
+    ]);
+
+    const commentCountMap = new Map(commentCounts.map(c => [c.articleId.toString(), c._count.id]));
+    const savedArticleIds = new Set(savedArticles.map(m => m.articleId.toString()));
+
+    return articles.map(article => ({
+      ...article,
+      _count: {
+        comments: commentCountMap.get(article.article_id.toString()) || 0
+      },
+      isSaved: savedArticleIds.has(article.article_id.toString())
+    }));
+  } catch (error) {
+    console.error("Failed to enrich articles:", error);
+    return articles; // Return original articles if enrichment fails
+  }
+}
+
+export async function searchArticles(query: string, userId?: number): Promise<Article[]> {
   const prismaContent = getPrismaContent();
   const tracer = trace.getTracer('epi-flipboard-webserver');
 
@@ -68,7 +109,7 @@ export async function searchArticles(query: string): Promise<Article[]> {
         take: 50,
       });
       span.setAttribute('search.results_count', articles.length);
-      return articles;
+      return await enrichArticles(articles, userId);
     } catch (error) {
       if (error instanceof Error) {
         span.recordException(error);
@@ -83,7 +124,7 @@ export async function searchArticles(query: string): Promise<Article[]> {
   });
 }
 
-export async function getArticlesByTags(tagIds: bigint[], publisherIds: bigint[] = []): Promise<Article[]> {
+export async function getArticlesByTags(tagIds: bigint[], publisherIds: bigint[] = [], userId?: number): Promise<Article[]> {
   const prismaContent = getPrismaContent();
   try {
     const articles = await prismaContent.articles.findMany({
@@ -118,7 +159,7 @@ export async function getArticlesByTags(tagIds: bigint[], publisherIds: bigint[]
       },
       take: 50,
     });
-    return articles;
+    return await enrichArticles(articles, userId);
   } catch (error) {
     console.error("Failed to fetch articles by tags:", error);
     return [];
@@ -126,7 +167,7 @@ export async function getArticlesByTags(tagIds: bigint[], publisherIds: bigint[]
 }
 
 
-export async function getArticlesByIds(ids: bigint[]): Promise<Article[]> {
+export async function getArticlesByIds(ids: bigint[], userId?: number): Promise<Article[]> {
   const prismaContent = getPrismaContent();
   try {
     const articles = await prismaContent.articles.findMany({
@@ -147,7 +188,7 @@ export async function getArticlesByIds(ids: bigint[]): Promise<Article[]> {
         published_at: "desc",
       },
     });
-    return articles;
+    return await enrichArticles(articles, userId);
   } catch (error) {
     return [];
   }
