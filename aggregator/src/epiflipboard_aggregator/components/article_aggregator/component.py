@@ -214,6 +214,7 @@ class ArticleAggregatorComponent(dg.Component, dg.Model, dg.Resolvable):
 
 					if not title or not original_url:
 						context.log.warning(f'failed to parse article from source: {feed_name}')
+						failed_parsing_dist[feed_name] += 1
 						continue
 
 					authors = [a.get('name') for a in entry.get('authors', [])]

@@ -1,0 +1,53 @@
+---
+name: Test
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version-file: "aggregator/pyproject.toml"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          working-directory: aggregator
+          enable-cache: true
+
+      - name: Run Tests
+        run: uv run --frozen pytest --cov epiflipboard_aggregator --cov-report=lcov
+        working-directory: aggregator
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+        working-directory: webserver
+
+      - name: Run tests
+        run: bunx vitest run --coverage
+        working-directory: webserver
+
+      - name: Upload results to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./aggregator/coverage.lcov,./webserver/coverage/lcov.info
+          disable_search: true
+          token: ${{ secrets.CODECOV_TOKEN }}

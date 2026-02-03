@@ -1,5 +1,5 @@
 ---
-name: Release
+name: Tag
 
 permissions:
   packages: write
@@ -42,34 +42,6 @@ jobs:
       image_name: webserver
       version: ${{ needs.extract-version.outputs.version }}
       ref: ${{ github.sha }}
-
-  webserver-post-build-steps:
-    needs: build-push-webserver
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 2
-
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Install dependencies
-        run: bun install
-        working-directory: webserver
-
-      - name: Run tests
-        run: bunx vitest run --coverage
-        working-directory: webserver
-
-      - name: Upload results to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
 
   build-push-aggregator:
     needs: extract-version
