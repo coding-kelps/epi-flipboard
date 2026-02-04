@@ -32,8 +32,16 @@ jobs:
           echo "project=$PROJECT" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+  test:
+    uses: ./.github/workflows/test.yaml
+    with:
+      upload_coverage: true
+      ref: ${{ github.sha }}
+
   build-push-webserver:
-    needs: extract-version
+    needs:
+      - extract-version
+      - test
     if: needs.extract-version.outputs.project == 'webserver'
     uses: ./.github/workflows/container_build_push.yaml
     with:
@@ -44,7 +52,9 @@ jobs:
       ref: ${{ github.sha }}
 
   build-push-aggregator:
-    needs: extract-version
+    needs:
+      - extract-version
+      - test
     if: needs.extract-version.outputs.project == 'aggregator'
     uses: ./.github/workflows/container_build_push.yaml
     with:

@@ -1,0 +1,111 @@
+---
+name: Release
+
+permissions:
+  contents: write
+  issues: read
+  pull-requests: read
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to build release from'
+        required: true
+        type: string
+
+jobs:
+  extract-version:
+    name: Extract version
+    runs-on: ubuntu-latest
+    outputs:
+      project: ${{ steps.get.outputs.project }}
+      version: ${{ steps.get.outputs.version }}
+    steps:
+      - name: Parse tag and validate
+        id: get
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          VERSION=${TAG##*-v}
+          PROJECT=${TAG%-v$VERSION}
+          echo "project=${PROJECT^}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+  generate-changelog:
+    name: Generate a changelog
+    runs-on: ubuntu-latest
+    outputs:
+      release_body: ${{ steps.git-cliff.outputs.content }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+      - name: Generate a changelog
+        uses: orhun/git-cliff-action@v4
+        id: git-cliff
+        with:
+          config: cliff.toml
+          args: -vv --latest --strip header
+        env:
+          OUTPUT: CHANGES.md
+          GITHUB_REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  generate-sbom:
+    name: Generate SBOMs (SPDX)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag }}
+      - name: Generate webserver SBOM (SPDX)
+        id: webserver-sbom
+        uses: anchore/sbom-action@v0
+        with:
+          path: webserver
+          format: spdx
+          artifact-name: epi-flipboard-webserver.sbom.spdx
+      - name: Generate aggregator SBOM (SPDX)
+        id: aggregator-sbom
+        uses: anchore/sbom-action@v0
+        with:
+          path: aggregator
+          format: spdx
+          artifact-name: epi-flipboard-aggregator.sbom.spdx
+
+  create-release:
+    name: Create release
+    runs-on: ubuntu-latest
+    needs:
+      - extract-version
+      - generate-changelog
+      - generate-sbom
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag }}
+      - name: Download Webserver SBOM
+        uses: actions/download-artifact@v7
+        with:
+          name: epi-flipboard-webserver.sbom.spdx
+          path: .
+      - name: Download Aggregator SBOM
+        uses: actions/download-artifact@v7
+        with:
+          name: epi-flipboard-aggregator.sbom.spdx
+          path: .
+      - name: Upload release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ needs.extract-version.outputs.project }} v${{ needs.extract-version.outputs.version }}
+          tag_name: ${{ inputs.tag }}
+          body: ${{ needs.generate-changelog.outputs.release_body }}
+          files: |
+            LICENSE
+            CHANGELOG.md
+            epi-flipboard-webserver.sbom.spdx
+            epi-flipboard-aggregator.sbom.spdx

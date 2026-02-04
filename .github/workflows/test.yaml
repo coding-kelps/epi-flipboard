@@ -6,6 +6,29 @@ permissions:
 
 on:
   workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Ref of the commit to test'
+        required: true
+        default: main
+        type: string
+      upload_coverage:
+        description: 'Upload coverage to CodeCov?'
+        required: true
+        default: false
+        type: boolean
+  workflow_call:
+    inputs:
+      ref:
+        description: 'Ref of the commit to test'
+        required: true
+        default: main
+        type: string
+      upload_coverage:
+        description: 'Upload coverage to CodeCov?'
+        required: true
+        default: false
+        type: boolean
 
 jobs:
   testing:
@@ -15,6 +38,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
+          ref: ${{ inputs.ref }}
           fetch-depth: 2
 
       - name: Set up Python
@@ -46,6 +70,7 @@ jobs:
         working-directory: webserver
 
       - name: Upload results to Codecov
+        if: ${{ inputs.upload_coverage }}
         uses: codecov/codecov-action@v5
         with:
           files: ./aggregator/coverage.lcov,./webserver/coverage/lcov.info
