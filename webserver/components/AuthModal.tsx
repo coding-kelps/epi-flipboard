@@ -15,6 +15,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
+    const [termsAgreed, setTermsAgreed] = useState(false);
+    const [privacyAgreed, setPrivacyAgreed] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -28,6 +30,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         setLoading(true);
 
         try {
+            if (!isLogin && (!termsAgreed || !privacyAgreed)) {
+                setError('You must agree to the Terms of Service and Privacy Policy to create an account.');
+                setLoading(false);
+                return;
+            }
+
             const endpoint = isLogin ? '/api/account/login' : '/api/account/register';
             const body = isLogin ? { email, password } : { email, password, name };
 
@@ -114,6 +122,35 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                                 placeholder="••••••••"
                             />
                         </div>
+
+                        {!isLogin && (
+                            <div className="space-y-2">
+                                <div className="flex items-start">
+                                    <input
+                                        id="terms"
+                                        type="checkbox"
+                                        checked={termsAgreed}
+                                        onChange={(e) => setTermsAgreed(e.target.checked)}
+                                        className="mt-1 h-4 w-4 text-black border-gray-300 rounded focus:ring-black"
+                                    />
+                                    <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+                                        I agree to the <a href="#" className="font-medium text-black hover:underline">Terms of Service</a>
+                                    </label>
+                                </div>
+                                <div className="flex items-start">
+                                    <input
+                                        id="privacy"
+                                        type="checkbox"
+                                        checked={privacyAgreed}
+                                        onChange={(e) => setPrivacyAgreed(e.target.checked)}
+                                        className="mt-1 h-4 w-4 text-black border-gray-300 rounded focus:ring-black"
+                                    />
+                                    <label htmlFor="privacy" className="ml-2 block text-sm text-gray-700">
+                                        I agree to the <a href="#" className="font-medium text-black hover:underline">Privacy Policy</a>
+                                    </label>
+                                </div>
+                            </div>
+                        )}
 
                         {error && (
                             <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-md">

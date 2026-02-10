@@ -46,14 +46,35 @@ describe('AuthModal', () => {
         expect(screen.getByRole('button', { name: 'Sign In' })).toBeInTheDocument();
     });
 
-    it('switches to register form', async () => {
+    it('switches to register form and submits successfully', async () => {
         const user = userEvent.setup();
         render(<AuthModal {...defaultProps} />);
 
         await user.click(screen.getByText('Sign up'));
         expect(screen.getByRole('heading', { name: 'Create Account' })).toBeInTheDocument();
         expect(screen.getByPlaceholderText('John Doe')).toBeInTheDocument();
+
+        // Check checkboxes
+        await user.click(screen.getByLabelText(/Terms of Service/i));
+        await user.click(screen.getByLabelText(/Privacy Policy/i));
+
         expect(screen.getByRole('button', { name: 'Create Account' })).toBeInTheDocument();
+    });
+
+    it('shows error if checkboxes are not checked on register', async () => {
+        const user = userEvent.setup();
+        render(<AuthModal {...defaultProps} />);
+
+        await user.click(screen.getByText('Sign up'));
+
+        await user.type(screen.getByPlaceholderText('John Doe'), 'John Doe');
+        await user.type(screen.getByPlaceholderText('you@example.com'), 'test@test.com');
+        await user.type(screen.getByPlaceholderText('••••••••'), 'password');
+
+        await user.click(screen.getByRole('button', { name: 'Create Account' }));
+
+        expect(await screen.findByText('You must agree to the Terms of Service and Privacy Policy to create an account.')).toBeInTheDocument();
+        expect(mockFetch).not.toHaveBeenCalled();
     });
 
     it('submits login form successfully', async () => {
