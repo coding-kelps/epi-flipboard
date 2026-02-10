@@ -18,19 +18,19 @@ Each commit message must be structured as follows:
 
 Use one of the following **commit types**:
 
-| Type | Description |
-|------|-------------|
-| **feat** | Introduce a new feature |
-| **fix** | Fix a bug |
-| **docs** | Add or update documentation only |
-| **perf** | Improve performance |
+| Type         | Description                                           |
+| ------------ | ----------------------------------------------------- |
+| **feat**     | Introduce a new feature                               |
+| **fix**      | Fix a bug                                             |
+| **docs**     | Add or update documentation only                      |
+| **perf**     | Improve performance                                   |
 | **refactor** | Code changes that neither fix a bug nor add a feature |
-| **style** | Code style or formatting changes (no logic changes) |
-| **test** | Add or modify tests |
-| **build** | Changes that affect the build system or dependencies |
-| **chore** | Other changes that don’t modify src or test files |
-| **ci** | Changes to CI/CD configuration or scripts |
-| **revert** | Revert a previous commit |
+| **style**    | Code style or formatting changes (no logic changes)   |
+| **test**     | Add or modify tests                                   |
+| **build**    | Changes that affect the build system or dependencies  |
+| **chore**    | Other changes that don’t modify src or test files     |
+| **ci**       | Changes to CI/CD configuration or scripts             |
+| **revert**   | Revert a previous commit                              |
 
 ## ✍️ Example Commits
 
@@ -41,4 +41,4 @@ docs(readme): update installation instructions
 style(lint): format code with Prettier
 test(user): add integration tests for user service
 chore(deps): update eslint to latest version
-````
+```

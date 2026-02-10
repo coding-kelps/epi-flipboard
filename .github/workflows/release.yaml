@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to build release from'
+        description: "Tag to build release from"
         required: true
         type: string
 

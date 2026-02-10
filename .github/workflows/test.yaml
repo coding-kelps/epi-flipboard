@@ -8,24 +8,24 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: 'Ref of the commit to test'
+        description: "Ref of the commit to test"
         required: true
         default: main
         type: string
       upload_coverage:
-        description: 'Upload coverage to CodeCov?'
+        description: "Upload coverage to CodeCov?"
         required: true
         default: false
         type: boolean
   workflow_call:
     inputs:
       ref:
-        description: 'Ref of the commit to test'
+        description: "Ref of the commit to test"
         required: true
         default: main
         type: string
       upload_coverage:
-        description: 'Upload coverage to CodeCov?'
+        description: "Upload coverage to CodeCov?"
         required: true
         default: false
         type: boolean
