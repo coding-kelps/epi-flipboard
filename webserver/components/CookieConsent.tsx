@@ -1,31 +1,32 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
 
 export default function CookieConsent() {
-    const [showBanner, setShowBanner] = useState(false);
+    const [showBanner, setShowBanner] = useState(false)
 
     useEffect(() => {
         // Check if user has already made a consent choice
-        const consent = localStorage.getItem("cookieConsent");
+        const consent = localStorage.getItem('cookieConsent')
         if (!consent) {
-            setShowBanner(true);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setShowBanner(true)
         }
-    }, []);
+    }, [])
 
     const handleAccept = () => {
-        localStorage.setItem("cookieConsent", "accepted");
-        setShowBanner(false);
-    };
+        localStorage.setItem('cookieConsent', 'accepted')
+        setShowBanner(false)
+    }
 
     const handleDecline = () => {
-        localStorage.setItem("cookieConsent", "declined");
-        setShowBanner(false);
-    };
+        localStorage.setItem('cookieConsent', 'declined')
+        setShowBanner(false)
+    }
 
     if (!showBanner) {
-        return null;
+        return null
     }
 
     return (
@@ -38,15 +39,18 @@ export default function CookieConsent() {
                                 🍪 We Use Cookies
                             </h3>
                             <p className="text-sm text-gray-600 leading-relaxed">
-                                We use cookies and similar technologies to enhance your browsing experience,
-                                analyze site traffic, and personalize content. By clicking "Accept," you consent
-                                to our use of cookies as described in our{" "}
+                                We use cookies and similar technologies to
+                                enhance your browsing experience, analyze site
+                                traffic, and personalize content. By clicking
+                                &quot;Accept,&quot; you consent to our use of
+                                cookies as described in our{' '}
                                 <Link
                                     href="/privacy"
                                     className="text-blue-600 hover:underline font-medium"
                                 >
                                     Privacy Policy
-                                </Link>.
+                                </Link>
+                                .
                             </p>
                         </div>
                         <div className="flex gap-3 w-full md:w-auto">
@@ -69,5 +73,5 @@ export default function CookieConsent() {
                 </div>
             </div>
         </div>
-    );
+    )
 }

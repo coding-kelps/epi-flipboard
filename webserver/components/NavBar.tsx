@@ -1,13 +1,12 @@
-'use client';
+'use client'
 
-import Link from "next/link";
-import { usePathname } from 'next/navigation';
-
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 export default function NavBar({ items }: { items: string[] }) {
-    const pathname = usePathname();
+    const pathname = usePathname()
 
-    if (pathname === '/profile') return null;
+    if (pathname === '/profile') return null
 
     return (
         <nav className="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm border-t border-double border-gray-200">
@@ -26,5 +25,5 @@ export default function NavBar({ items }: { items: string[] }) {
                 </ul>
             </div>
         </nav>
-    );
+    )
 }

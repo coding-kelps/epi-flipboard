@@ -1,30 +1,35 @@
-
-import { searchFeeds } from "@/app/actions";
-import ExploreSearch from "@/components/ExploreSearch";
-import Link from "next/link";
+import { searchFeeds } from '@/app/actions'
+import ExploreSearch from '@/components/ExploreSearch'
+import Link from 'next/link'
 
 interface ExplorePageProps {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'
 
 export default async function ExplorePage({ searchParams }: ExplorePageProps) {
-    const { q } = await searchParams;
-    const query = typeof q === 'string' ? q : '';
+    const { q } = await searchParams
+    const query = typeof q === 'string' ? q : ''
 
-    const feeds = await searchFeeds(query, 9);
+    const feeds = await searchFeeds(query, 9)
 
     return (
         <div className="container mx-auto px-4 py-12">
             <div className="flex flex-col items-center mb-12">
-                <h1 className="text-4xl md:text-5xl font-serif font-black text-center mb-8">Explore Feeds</h1>
+                <h1 className="text-4xl md:text-5xl font-serif font-black text-center mb-8">
+                    Explore Feeds
+                </h1>
                 <ExploreSearch />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {feeds.map((feed) => (
-                    <Link key={feed.id} href={`/feeds/${feed.id}`} className="group block relative">
+                    <Link
+                        key={feed.id}
+                        href={`/feeds/${feed.id}`}
+                        className="group block relative"
+                    >
                         <article className="h-full p-6 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow flex flex-col">
                             <div className="flex justify-between items-start">
                                 <h2 className="text-xl font-bold font-serif text-gray-900 mb-2 group-hover:text-gray-700">
@@ -36,7 +41,11 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
                             </p>
                             <div className="text-xs text-gray-400 mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
                                 <span>{feed.tagIds.length} tags</span>
-                                <span>{new Date(feed.createdAt).toLocaleDateString()}</span>
+                                <span>
+                                    {new Date(
+                                        feed.createdAt
+                                    ).toLocaleDateString()}
+                                </span>
                             </div>
                         </article>
                     </Link>
@@ -49,5 +58,5 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
                 </div>
             )}
         </div>
-    );
+    )
 }

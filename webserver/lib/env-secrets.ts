@@ -1,38 +1,35 @@
-import { readFileSync } from "node:fs";
-
+import { readFileSync } from 'node:fs'
 
 type SecretOptions = {
-  name: string;
-  fileName?: string;
-  required?: boolean;
-};
+    name: string
+    fileName?: string
+    required?: boolean
+}
 
 export function loadSecret({
-  name,
-  fileName = `${name}_FILE`,
-  required = true,
+    name,
+    fileName = `${name}_FILE`,
+    required = true,
 }: SecretOptions): string | undefined {
-  const directValue = process.env[name];
-  if (directValue) {
-    return directValue;
-  }
-
-  const filePath = process.env[fileName];
-  if (filePath) {
-    try {
-      return readFileSync(filePath, "utf8").trim();
-    } catch (err) {
-      throw new Error(
-        `Failed to read secret file for ${name} at ${filePath}`
-      );
+    const directValue = process.env[name]
+    if (directValue) {
+        return directValue
     }
-  }
 
-  if (required) {
-    throw new Error(
-      `Missing required secret: ${name} or ${fileName}`
-    );
-  }
+    const filePath = process.env[fileName]
+    if (filePath) {
+        try {
+            return readFileSync(filePath, 'utf8').trim()
+        } catch {
+            throw new Error(
+                `Failed to read secret file for ${name} at ${filePath}`
+            )
+        }
+    }
 
-  return undefined;
+    if (required) {
+        throw new Error(`Missing required secret: ${name} or ${fileName}`)
+    }
+
+    return undefined
 }

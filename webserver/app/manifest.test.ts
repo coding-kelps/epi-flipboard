@@ -1,13 +1,13 @@
-import { describe, it, expect } from 'vitest';
-import manifest from './manifest';
+import { describe, it, expect } from 'vitest'
+import manifest from './manifest'
 
 describe('Manifest', () => {
     it('returns correct manifest configuration', () => {
-        const config = manifest();
+        const config = manifest()
         expect(config).toEqual({
             name: 'EpiFlipBoard',
             short_name: 'EpiFlipBoard',
-            description: "A FlipBoard clone made for a school project.",
+            description: 'A FlipBoard clone made for a school project.',
             start_url: '/',
             display: 'standalone',
             background_color: '#fdfdfd',
@@ -19,6 +19,6 @@ describe('Manifest', () => {
                     type: 'image/x-icon',
                 },
             ],
-        });
-    });
-});
+        })
+    })
+})

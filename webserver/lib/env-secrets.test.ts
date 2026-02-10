@@ -1,55 +1,61 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { loadSecret } from './env-secrets';
-import fs from 'node:fs';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { loadSecret } from './env-secrets'
+import fs from 'node:fs'
 
 vi.mock('node:fs', () => ({
     default: {
         readFileSync: vi.fn(),
     },
     readFileSync: vi.fn(), // Handle named export if used
-}));
+}))
 
 describe('loadSecret', () => {
-    const originalEnv = process.env;
+    const originalEnv = process.env
 
     beforeEach(() => {
-        vi.clearAllMocks();
-        process.env = { ...originalEnv };
-    });
+        vi.clearAllMocks()
+        process.env = { ...originalEnv }
+    })
 
     afterEach(() => {
-        process.env = originalEnv;
-    });
+        process.env = originalEnv
+    })
 
     it('returns direct env value if present', () => {
-        process.env.TEST_SECRET = 'direct_value';
-        const result = loadSecret({ name: 'TEST_SECRET' });
-        expect(result).toBe('direct_value');
-    });
+        process.env.TEST_SECRET = 'direct_value'
+        const result = loadSecret({ name: 'TEST_SECRET' })
+        expect(result).toBe('direct_value')
+    })
 
     it('reads from file if direct value missing', () => {
-        process.env.TEST_SECRET_FILE = '/path/to/secret';
-        (fs.readFileSync as any).mockReturnValue('file_value\n');
+        process.env.TEST_SECRET_FILE = '/path/to/secret'
+        ;(fs.readFileSync as any).mockReturnValue('file_value\n')
 
-        const result = loadSecret({ name: 'TEST_SECRET' });
+        const result = loadSecret({ name: 'TEST_SECRET' })
 
-        expect(fs.readFileSync).toHaveBeenCalledWith('/path/to/secret', 'utf8');
-        expect(result).toBe('file_value');
-    });
+        expect(fs.readFileSync).toHaveBeenCalledWith('/path/to/secret', 'utf8')
+        expect(result).toBe('file_value')
+    })
 
     it('throws error if file read fails', () => {
-        process.env.TEST_SECRET_FILE = '/path/to/secret';
-        (fs.readFileSync as any).mockImplementation(() => { throw new Error('File not found') });
+        process.env.TEST_SECRET_FILE = '/path/to/secret'
+        ;(fs.readFileSync as any).mockImplementation(() => {
+            throw new Error('File not found')
+        })
 
-        expect(() => loadSecret({ name: 'TEST_SECRET' })).toThrow(/Failed to read secret file/);
-    });
+        expect(() => loadSecret({ name: 'TEST_SECRET' })).toThrow(
+            /Failed to read secret file/
+        )
+    })
 
     it('throws error if missing and required', () => {
-        expect(() => loadSecret({ name: 'MISSING_SECRET' })).toThrow(/Missing required secret/);
-    });
+        expect(() => loadSecret({ name: 'MISSING_SECRET' })).toThrow(
+            /Missing required secret/
+        )
+    })
 
     it('returns undefined if missing and not required', () => {
-        const result = loadSecret({ name: 'MISSING_SECRET', required: false });
-        expect(result).toBeUndefined();
-    });
-});
+        const result = loadSecret({ name: 'MISSING_SECRET', required: false })
+        expect(result).toBeUndefined()
+    })
+})

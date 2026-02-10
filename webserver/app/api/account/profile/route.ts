@@ -1,27 +1,29 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { getPrismaIdentity } from '@/lib/prisma'
+import { verifyToken } from '@/lib/auth'
+import { cookies } from 'next/headers'
+import { trace } from '@opentelemetry/api'
 
-import { NextRequest, NextResponse } from 'next/server';
-import { getPrismaIdentity } from '@/lib/prisma';
-import { verifyToken } from '@/lib/auth';
-import { cookies } from 'next/headers';
-import { trace } from '@opentelemetry/api';
-
-export async function GET(req: NextRequest) {
-    const span = trace.getActiveSpan();
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth_token')?.value;
+export async function GET() {
+    const span = trace.getActiveSpan()
+    const cookieStore = await cookies()
+    const token = cookieStore.get('auth_token')?.value
 
     if (!token) {
-        return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+        return NextResponse.json(
+            { error: 'Not authenticated' },
+            { status: 401 }
+        )
     }
 
-    const payload = verifyToken(token);
+    const payload = verifyToken(token)
     if (!payload || typeof payload === 'string' || !payload.userId) {
-        return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+        return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    span?.addEvent('user.profile_view', { userId: payload.userId });
+    span?.addEvent('user.profile_view', { userId: payload.userId })
 
-    const prismaIdentity = getPrismaIdentity();
+    const prismaIdentity = getPrismaIdentity()
     const user = await prismaIdentity.user.findUnique({
         where: { id: payload.userId },
         select: {
@@ -29,36 +31,39 @@ export async function GET(req: NextRequest) {
             email: true,
             name: true,
             createdAt: true,
-        }
-    });
+        },
+    })
 
     if (!user) {
-        return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ user });
+    return NextResponse.json({ user })
 }
 
 export async function PUT(req: NextRequest) {
-    const span = trace.getActiveSpan();
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth_token')?.value;
+    const span = trace.getActiveSpan()
+    const cookieStore = await cookies()
+    const token = cookieStore.get('auth_token')?.value
 
     if (!token) {
-        return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+        return NextResponse.json(
+            { error: 'Not authenticated' },
+            { status: 401 }
+        )
     }
 
-    const payload = verifyToken(token);
+    const payload = verifyToken(token)
     if (!payload || typeof payload === 'string' || !payload.userId) {
-        return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+        return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    const body = await req.json();
-    const { name } = body;
+    const body = await req.json()
+    const { name } = body
 
-    span?.addEvent('user.profile_update', { userId: payload.userId, name });
+    span?.addEvent('user.profile_update', { userId: payload.userId, name })
 
-    const prismaIdentity = getPrismaIdentity();
+    const prismaIdentity = getPrismaIdentity()
     const user = await prismaIdentity.user.update({
         where: { id: payload.userId },
         data: { name },
@@ -66,8 +71,8 @@ export async function PUT(req: NextRequest) {
             id: true,
             email: true,
             name: true,
-        }
-    });
+        },
+    })
 
-    return NextResponse.json({ user });
+    return NextResponse.json({ user })
 }

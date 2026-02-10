@@ -1,71 +1,79 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { X, Loader2 } from 'lucide-react';
-import { useAuth } from '@/components/AuthProvider';
+import { useState } from 'react'
+import { X, Loader2 } from 'lucide-react'
+import { useAuth } from '@/components/AuthProvider'
 
 interface AuthModalProps {
-    isOpen: boolean;
-    onClose: () => void;
+    isOpen: boolean
+    onClose: () => void
 }
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
-    const [isLogin, setIsLogin] = useState(true);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [name, setName] = useState('');
-    const [termsAgreed, setTermsAgreed] = useState(false);
-    const [privacyAgreed, setPrivacyAgreed] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
-    const router = useRouter();
-    const { login } = useAuth();
+    const [isLogin, setIsLogin] = useState(true)
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [name, setName] = useState('')
+    const [termsAgreed, setTermsAgreed] = useState(false)
+    const [privacyAgreed, setPrivacyAgreed] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+    const [loading, setLoading] = useState(false)
+    // const router = useRouter(); // unused
+    const { login } = useAuth()
 
-    if (!isOpen) return null;
+    if (!isOpen) return null
 
     async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
-        setError(null);
-        setLoading(true);
+        e.preventDefault()
+        setError(null)
+        setLoading(true)
 
         try {
             if (!isLogin && (!termsAgreed || !privacyAgreed)) {
-                setError('You must agree to the Terms of Service and Privacy Policy to create an account.');
-                setLoading(false);
-                return;
+                setError(
+                    'You must agree to the Terms of Service and Privacy Policy to create an account.'
+                )
+                setLoading(false)
+                return
             }
 
-            const endpoint = isLogin ? '/api/account/login' : '/api/account/register';
-            const body = isLogin ? { email, password } : { email, password, name };
+            const endpoint = isLogin
+                ? '/api/account/login'
+                : '/api/account/register'
+            const body = isLogin
+                ? { email, password }
+                : { email, password, name }
 
             const res = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
-            });
+            })
 
-            const data = await res.json();
+            const data = await res.json()
 
             if (!res.ok) {
-                throw new Error(data.error || 'Something went wrong');
+                throw new Error(data.error || 'Something went wrong')
             }
 
             // Success
-            login(); // Refresh context
-            onClose();
+            login() // Refresh context
+            onClose()
             // router.refresh(); // Context handles UI update
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err) {
+            if (err instanceof Error) {
+                setError(err.message)
+            } else {
+                setError('An unexpected error occurred')
+            }
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
     }
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             <div className="relative w-full max-w-md overflow-hidden bg-white rounded-lg shadow-xl ring-1 ring-gray-900/5">
-
                 {/* Close Button */}
                 <button
                     onClick={onClose}
@@ -80,14 +88,18 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                             {isLogin ? 'Welcome Back' : 'Create Account'}
                         </h2>
                         <p className="mt-2 text-sm text-gray-600">
-                            {isLogin ? 'Sign in to access your customized feed.' : 'Join us to personalize your reading experience.'}
+                            {isLogin
+                                ? 'Sign in to access your customized feed.'
+                                : 'Join us to personalize your reading experience.'}
                         </p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {!isLogin && (
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Full Name
+                                </label>
                                 <input
                                     type="text"
                                     required
@@ -100,7 +112,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                         )}
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Email Address
+                            </label>
                             <input
                                 type="email"
                                 required
@@ -112,7 +126,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Password
+                            </label>
                             <input
                                 type="password"
                                 required
@@ -130,11 +146,22 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                                         id="terms"
                                         type="checkbox"
                                         checked={termsAgreed}
-                                        onChange={(e) => setTermsAgreed(e.target.checked)}
+                                        onChange={(e) =>
+                                            setTermsAgreed(e.target.checked)
+                                        }
                                         className="mt-1 h-4 w-4 text-black border-gray-300 rounded focus:ring-black"
                                     />
-                                    <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
-                                        I agree to the <a href="#" className="font-medium text-black hover:underline">Terms of Service</a>
+                                    <label
+                                        htmlFor="terms"
+                                        className="ml-2 block text-sm text-gray-700"
+                                    >
+                                        I agree to the{' '}
+                                        <a
+                                            href="#"
+                                            className="font-medium text-black hover:underline"
+                                        >
+                                            Terms of Service
+                                        </a>
                                     </label>
                                 </div>
                                 <div className="flex items-start">
@@ -142,11 +169,22 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                                         id="privacy"
                                         type="checkbox"
                                         checked={privacyAgreed}
-                                        onChange={(e) => setPrivacyAgreed(e.target.checked)}
+                                        onChange={(e) =>
+                                            setPrivacyAgreed(e.target.checked)
+                                        }
                                         className="mt-1 h-4 w-4 text-black border-gray-300 rounded focus:ring-black"
                                     />
-                                    <label htmlFor="privacy" className="ml-2 block text-sm text-gray-700">
-                                        I agree to the <a href="#" className="font-medium text-black hover:underline">Privacy Policy</a>
+                                    <label
+                                        htmlFor="privacy"
+                                        className="ml-2 block text-sm text-gray-700"
+                                    >
+                                        I agree to the{' '}
+                                        <a
+                                            href="#"
+                                            className="font-medium text-black hover:underline"
+                                        >
+                                            Privacy Policy
+                                        </a>
                                     </label>
                                 </div>
                             </div>
@@ -169,14 +207,18 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                                     <span>Processing...</span>
                                 </div>
                             ) : (
-                                <span>{isLogin ? 'Sign In' : 'Create Account'}</span>
+                                <span>
+                                    {isLogin ? 'Sign In' : 'Create Account'}
+                                </span>
                             )}
                         </button>
                     </form>
 
                     <div className="mt-6 text-center text-sm">
                         <span className="text-gray-600">
-                            {isLogin ? "Don't have an account? " : "Already have an account? "}
+                            {isLogin
+                                ? "Don't have an account? "
+                                : 'Already have an account? '}
                         </span>
                         <button
                             onClick={() => setIsLogin(!isLogin)}
@@ -188,5 +230,5 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 </div>
             </div>
         </div>
-    );
+    )
 }

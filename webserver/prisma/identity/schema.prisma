@@ -8,7 +8,7 @@ datasource db {
   provider = "postgresql"
 }
 
-model User { 
+model User {
   id             Int      @id @default(autoincrement()) @map("user_id")
   createdAt      DateTime @default(now()) @map("created_at")
   email          String   @unique

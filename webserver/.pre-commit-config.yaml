@@ -1,0 +1,21 @@
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v6.0.0
+      hooks:
+          - id: check-yaml
+          - id: end-of-file-fixer
+          - id: trailing-whitespace
+
+    - repo: local
+      hooks:
+          - id: prettier
+            name: Prettier
+            entry: bash -c 'cd webserver && bunx prettier --write "${@#webserver/}"' --
+            language: system
+            files: ^webserver/.*\.(js|jsx|ts|tsx|json|css|scss|md|yaml|yml)$
+
+          - id: eslint
+            name: ESLint
+            entry: bash -c 'cd webserver && bunx eslint --max-warnings=0 --no-warn-ignored "${@#webserver/}"' --
+            language: system
+            files: ^webserver/.*\.(js|jsx|ts|tsx)$

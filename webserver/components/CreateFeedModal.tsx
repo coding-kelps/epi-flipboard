@@ -1,157 +1,205 @@
-'use client';
+'use client'
 
-import { useState, useEffect } from 'react';
-import { X, Search, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react'
+import { X, Search, Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export interface Tag {
-    tag_id: number;
-    name: string;
+    tag_id: number
+    name: string
 }
 
 export interface Publisher {
-    publisher_id: string;
-    name: string;
+    publisher_id: string
+    name: string
 }
 
-
 export interface FeedData {
-    id?: number;
-    name: string;
-    description: string;
-    tagIds: number[];
-    tags?: Tag[]; // Helper for UI display if available
-    publisherIds?: number[];
-    publishers?: Publisher[];
+    id?: number
+    name: string
+    description: string
+    tagIds: number[]
+    tags?: Tag[] // Helper for UI display if available
+    publisherIds?: number[]
+    publishers?: Publisher[]
 }
 
 interface CreateFeedModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    initialData?: FeedData | null;
+    isOpen: boolean
+    onClose: () => void
+    initialData?: FeedData | null
 }
 
-export default function CreateFeedModal({ isOpen, onClose, initialData }: CreateFeedModalProps) {
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-    const [tagQuery, setTagQuery] = useState('');
-    const [tagSuggestions, setTagSuggestions] = useState<Tag[]>([]);
-    const [selectedPublishers, setSelectedPublishers] = useState<Publisher[]>([]);
-    const [publisherQuery, setPublisherQuery] = useState('');
-    const [publisherSuggestions, setPublisherSuggestions] = useState<Publisher[]>([]);
-    const [isSearchingPublisher, setIsSearchingPublisher] = useState(false);
-    const [isSearching, setIsSearching] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const router = useRouter();
+export default function CreateFeedModal({
+    isOpen,
+    onClose,
+    initialData,
+}: CreateFeedModalProps) {
+    const [name, setName] = useState('')
+    const [description, setDescription] = useState('')
+    const [selectedTags, setSelectedTags] = useState<Tag[]>([])
+    const [tagQuery, setTagQuery] = useState('')
+    const [tagSuggestions, setTagSuggestions] = useState<Tag[]>([])
+    const [selectedPublishers, setSelectedPublishers] = useState<Publisher[]>(
+        []
+    )
+    const [publisherQuery, setPublisherQuery] = useState('')
+    const [publisherSuggestions, setPublisherSuggestions] = useState<
+        Publisher[]
+    >([])
+    const [isSearchingPublisher, setIsSearchingPublisher] = useState(false)
+    const [isSearching, setIsSearching] = useState(false)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const router = useRouter()
 
     useEffect(() => {
         if (isOpen) {
             if (initialData) {
-                setName(initialData.name);
-                setDescription(initialData.description);
+                setName(initialData.name)
+                setDescription(initialData.description)
                 if (initialData.tags && initialData.tags.length > 0) {
-                    setSelectedTags(initialData.tags);
-                } else if (initialData.tagIds && initialData.tagIds.length > 0) {
-                    fetch(`/api/tags/search?ids=${initialData.tagIds.join(',')}`)
-                        .then(res => res.json())
-                        .then(tags => setSelectedTags(tags))
-                        .catch(err => console.error("Failed to load tags for edit", err));
+                    setSelectedTags(initialData.tags)
+                } else if (
+                    initialData.tagIds &&
+                    initialData.tagIds.length > 0
+                ) {
+                    fetch(
+                        `/api/tags/search?ids=${initialData.tagIds.join(',')}`
+                    )
+                        .then((res) => res.json())
+                        .then((tags) => setSelectedTags(tags))
+                        .catch((err) =>
+                            console.error('Failed to load tags for edit', err)
+                        )
                 }
 
-                if (initialData.publishers && initialData.publishers.length > 0) {
-                    setSelectedPublishers(initialData.publishers);
-                } else if (initialData.publisherIds && initialData.publisherIds.length > 0) {
-                    fetch(`/api/publishers/search?ids=${initialData.publisherIds.join(',')}`)
-                        .then(res => res.json())
-                        .then(pubs => setSelectedPublishers(pubs))
-                        .catch(err => console.error("Failed to load publishers for edit", err));
+                if (
+                    initialData.publishers &&
+                    initialData.publishers.length > 0
+                ) {
+                    setSelectedPublishers(initialData.publishers)
+                } else if (
+                    initialData.publisherIds &&
+                    initialData.publisherIds.length > 0
+                ) {
+                    fetch(
+                        `/api/publishers/search?ids=${initialData.publisherIds.join(',')}`
+                    )
+                        .then((res) => res.json())
+                        .then((pubs) => setSelectedPublishers(pubs))
+                        .catch((err) =>
+                            console.error(
+                                'Failed to load publishers for edit',
+                                err
+                            )
+                        )
                 }
             } else {
-                setName('');
-                setDescription('');
-                setSelectedTags([]);
-                setSelectedPublishers([]);
+                setName('')
+                setDescription('')
+                setSelectedTags([])
+                setSelectedPublishers([])
             }
         }
-    }, [isOpen, initialData]);
+    }, [isOpen, initialData])
 
     useEffect(() => {
         const fetchTags = async () => {
             if (tagQuery.length < 2) {
-                setTagSuggestions([]);
-                return;
+                setTagSuggestions([])
+                return
             }
-            setIsSearching(true);
+            setIsSearching(true)
             try {
-                const res = await fetch(`/api/tags/search?q=${encodeURIComponent(tagQuery)}`);
+                const res = await fetch(
+                    `/api/tags/search?q=${encodeURIComponent(tagQuery)}`
+                )
                 if (res.ok) {
-                    const tags: Tag[] = await res.json();
-                    setTagSuggestions(tags.filter(t => !selectedTags.some(selected => selected.tag_id === t.tag_id)));
+                    const tags: Tag[] = await res.json()
+                    setTagSuggestions(
+                        tags.filter(
+                            (t) =>
+                                !selectedTags.some(
+                                    (selected) => selected.tag_id === t.tag_id
+                                )
+                        )
+                    )
                 }
             } catch (error) {
-                console.error("Failed to search tags", error);
+                console.error('Failed to search tags', error)
             } finally {
-                setIsSearching(false);
+                setIsSearching(false)
             }
-        };
+        }
 
-        const timeoutId = setTimeout(fetchTags, 300);
-        return () => clearTimeout(timeoutId);
-    }, [tagQuery, selectedTags]);
+        const timeoutId = setTimeout(fetchTags, 300)
+        return () => clearTimeout(timeoutId)
+    }, [tagQuery, selectedTags])
 
     useEffect(() => {
         const fetchPublishers = async () => {
             if (publisherQuery.length < 2) {
-                setPublisherSuggestions([]);
-                return;
+                setPublisherSuggestions([])
+                return
             }
-            setIsSearchingPublisher(true);
+            setIsSearchingPublisher(true)
             try {
-                const res = await fetch(`/api/publishers/search?q=${encodeURIComponent(publisherQuery)}`);
+                const res = await fetch(
+                    `/api/publishers/search?q=${encodeURIComponent(publisherQuery)}`
+                )
                 if (res.ok) {
-                    const pubs: Publisher[] = await res.json();
-                    setPublisherSuggestions(pubs.filter(p => !selectedPublishers.some(selected => selected.publisher_id === p.publisher_id)));
+                    const pubs: Publisher[] = await res.json()
+                    setPublisherSuggestions(
+                        pubs.filter(
+                            (p) =>
+                                !selectedPublishers.some(
+                                    (selected) =>
+                                        selected.publisher_id === p.publisher_id
+                                )
+                        )
+                    )
                 }
             } catch (error) {
-                console.error("Failed to search publishers", error);
+                console.error('Failed to search publishers', error)
             } finally {
-                setIsSearchingPublisher(false);
+                setIsSearchingPublisher(false)
             }
         }
-        const timeoutId = setTimeout(fetchPublishers, 300);
-        return () => clearTimeout(timeoutId);
-    }, [publisherQuery, selectedPublishers]);
+        const timeoutId = setTimeout(fetchPublishers, 300)
+        return () => clearTimeout(timeoutId)
+    }, [publisherQuery, selectedPublishers])
 
     const handleAddTag = (tag: Tag) => {
-        setSelectedTags([...selectedTags, tag]);
-        setTagQuery('');
-        setTagSuggestions([]);
-    };
+        setSelectedTags([...selectedTags, tag])
+        setTagQuery('')
+        setTagSuggestions([])
+    }
 
     const handleRemoveTag = (tagId: number) => {
-        setSelectedTags(selectedTags.filter(t => t.tag_id !== tagId));
-    };
+        setSelectedTags(selectedTags.filter((t) => t.tag_id !== tagId))
+    }
 
     const handleAddPublisher = (publisher: Publisher) => {
-        setSelectedPublishers([...selectedPublishers, publisher]);
-        setPublisherQuery('');
-        setPublisherSuggestions([]);
+        setSelectedPublishers([...selectedPublishers, publisher])
+        setPublisherQuery('')
+        setPublisherSuggestions([])
     }
 
     const handleRemovePublisher = (publisherId: string) => {
-        setSelectedPublishers(selectedPublishers.filter(p => p.publisher_id !== publisherId));
+        setSelectedPublishers(
+            selectedPublishers.filter((p) => p.publisher_id !== publisherId)
+        )
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!name) return;
+        e.preventDefault()
+        if (!name) return
 
-        setIsSubmitting(true);
+        setIsSubmitting(true)
         try {
-            const isEdit = !!initialData?.id;
-            const url = isEdit ? `/api/feeds/${initialData.id}` : '/api/feeds';
-            const method = isEdit ? 'PUT' : 'POST';
+            const isEdit = !!initialData?.id
+            const url = isEdit ? `/api/feeds/${initialData.id}` : '/api/feeds'
+            const method = isEdit ? 'PUT' : 'POST'
 
             const res = await fetch(url, {
                 method,
@@ -159,44 +207,54 @@ export default function CreateFeedModal({ isOpen, onClose, initialData }: Create
                 body: JSON.stringify({
                     name,
                     description,
-                    tagIds: selectedTags.map(t => t.tag_id),
-                    publisherIds: selectedPublishers.map(p => p.publisher_id),
+                    tagIds: selectedTags.map((t) => t.tag_id),
+                    publisherIds: selectedPublishers.map((p) => p.publisher_id),
                 }),
-            });
+            })
 
             if (res.ok) {
-                onClose();
-                setName('');
-                setDescription('');
-                setSelectedTags([]);
-                setSelectedPublishers([]);
-                router.refresh();
+                onClose()
+                setName('')
+                setDescription('')
+                setSelectedTags([])
+                setSelectedPublishers([])
+                router.refresh()
             } else {
-                throw new Error('Failed to save feed');
+                throw new Error('Failed to save feed')
             }
         } catch (error) {
-            console.error("Failed to save feed", error);
-            alert("Failed to save feed. Please try again.");
+            console.error('Failed to save feed', error)
+            alert('Failed to save feed. Please try again.')
         } finally {
-            setIsSubmitting(false);
+            setIsSubmitting(false)
         }
-    };
+    }
 
-    if (!isOpen) return null;
+    if (!isOpen) return null
 
     return (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto flex flex-col">
                 <div className="flex items-center justify-between p-4 border-b">
-                    <h2 className="text-xl font-bold font-serif">{initialData ? 'Edit Feed' : 'Create New Feed'}</h2>
-                    <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-full">
+                    <h2 className="text-xl font-bold font-serif">
+                        {initialData ? 'Edit Feed' : 'Create New Feed'}
+                    </h2>
+                    <button
+                        onClick={onClose}
+                        className="p-1 hover:bg-gray-100 rounded-full"
+                    >
                         <X className="w-5 h-5 text-gray-500" />
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-4">
+                <form
+                    onSubmit={handleSubmit}
+                    className="p-4 flex flex-col gap-4"
+                >
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Feed Name</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Feed Name
+                        </label>
                         <input
                             type="text"
                             value={name}
@@ -208,7 +266,9 @@ export default function CreateFeedModal({ isOpen, onClose, initialData }: Create
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Description
+                        </label>
                         <textarea
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
@@ -219,12 +279,23 @@ export default function CreateFeedModal({ isOpen, onClose, initialData }: Create
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Tags (Optional)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Tags (Optional)
+                        </label>
                         <div className="flex flex-wrap gap-2 mb-2">
-                            {selectedTags.map(tag => (
-                                <span key={tag.tag_id} className="inline-flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-full text-sm">
+                            {selectedTags.map((tag) => (
+                                <span
+                                    key={tag.tag_id}
+                                    className="inline-flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-full text-sm"
+                                >
                                     {tag.name}
-                                    <button type="button" onClick={() => handleRemoveTag(tag.tag_id)} className="hover:text-red-500">
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleRemoveTag(tag.tag_id)
+                                        }
+                                        className="hover:text-red-500"
+                                    >
                                         <X className="w-3 h-3" />
                                     </button>
                                 </span>
@@ -249,7 +320,7 @@ export default function CreateFeedModal({ isOpen, onClose, initialData }: Create
 
                             {tagSuggestions.length > 0 && (
                                 <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                                    {tagSuggestions.map(tag => (
+                                    {tagSuggestions.map((tag) => (
                                         <button
                                             key={tag.tag_id}
                                             type="button"
@@ -265,12 +336,25 @@ export default function CreateFeedModal({ isOpen, onClose, initialData }: Create
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Publishers (Optional)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Publishers (Optional)
+                        </label>
                         <div className="flex flex-wrap gap-2 mb-2">
-                            {selectedPublishers.map(pub => (
-                                <span key={pub.publisher_id} className="inline-flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-full text-sm">
+                            {selectedPublishers.map((pub) => (
+                                <span
+                                    key={pub.publisher_id}
+                                    className="inline-flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-full text-sm"
+                                >
                                     {pub.name}
-                                    <button type="button" onClick={() => handleRemovePublisher(pub.publisher_id)} className="hover:text-red-500">
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleRemovePublisher(
+                                                pub.publisher_id
+                                            )
+                                        }
+                                        className="hover:text-red-500"
+                                    >
                                         <X className="w-3 h-3" />
                                     </button>
                                 </span>
@@ -283,7 +367,9 @@ export default function CreateFeedModal({ isOpen, onClose, initialData }: Create
                             <input
                                 type="text"
                                 value={publisherQuery}
-                                onChange={(e) => setPublisherQuery(e.target.value)}
+                                onChange={(e) =>
+                                    setPublisherQuery(e.target.value)
+                                }
                                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
                                 placeholder="Search publishers..."
                             />
@@ -295,11 +381,13 @@ export default function CreateFeedModal({ isOpen, onClose, initialData }: Create
 
                             {publisherSuggestions.length > 0 && (
                                 <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                                    {publisherSuggestions.map(pub => (
+                                    {publisherSuggestions.map((pub) => (
                                         <button
                                             key={pub.publisher_id}
                                             type="button"
-                                            onClick={() => handleAddPublisher(pub)}
+                                            onClick={() =>
+                                                handleAddPublisher(pub)
+                                            }
                                             className="w-full text-left px-4 py-2 hover:bg-gray-50 text-sm"
                                         >
                                             {pub.name}
@@ -316,11 +404,15 @@ export default function CreateFeedModal({ isOpen, onClose, initialData }: Create
                             disabled={isSubmitting || !name.trim()}
                             className="w-full bg-black text-white py-2 rounded-md font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {isSubmitting ? 'Saving...' : (initialData ? 'Save Changes' : 'Create Feed')}
+                            {isSubmitting
+                                ? 'Saving...'
+                                : initialData
+                                  ? 'Save Changes'
+                                  : 'Create Feed'}
                         </button>
                     </div>
                 </form>
             </div>
         </div>
-    );
+    )
 }

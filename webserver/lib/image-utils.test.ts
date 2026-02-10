@@ -12,7 +12,7 @@ vi.mock('probe-image-size', () => {
                 return Promise.resolve({ width: 100, height: 100 })
             }
             return Promise.reject(new Error('Network error'))
-        })
+        }),
     }
 })
 
@@ -23,18 +23,26 @@ describe('checkImageResolution', () => {
 
     it('should return true if image width is >= minWidth', async () => {
         // default minWidth is 800
-        expect(await checkImageResolution('http://valid.com/image.jpg')).toBe(true)
+        expect(await checkImageResolution('http://valid.com/image.jpg')).toBe(
+            true
+        )
     })
 
     it('should return false if image width is < minWidth', async () => {
-        expect(await checkImageResolution('http://small.com/image.jpg')).toBe(false)
+        expect(await checkImageResolution('http://small.com/image.jpg')).toBe(
+            false
+        )
     })
 
     it('should return false on error', async () => {
-        expect(await checkImageResolution('http://error.com/image.jpg')).toBe(false)
+        expect(await checkImageResolution('http://error.com/image.jpg')).toBe(
+            false
+        )
     })
 
     it('should respect custom minWidth', async () => {
-        expect(await checkImageResolution('http://valid.com/image.jpg', 1200)).toBe(false)
+        expect(
+            await checkImageResolution('http://valid.com/image.jpg', 1200)
+        ).toBe(false)
     })
 })

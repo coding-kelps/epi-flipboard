@@ -1,7 +1,7 @@
-"use client";
+'use client'
 
-import NavCard from "@/components/NavCard";
-import { Compass, Rss, Bookmark, History } from "lucide-react";
+import NavCard from '@/components/NavCard'
+import { Compass, Rss, Bookmark, History } from 'lucide-react'
 
 export default function HomepageNav() {
     return (
@@ -42,5 +42,5 @@ export default function HomepageNav() {
                 restricted
             />
         </div>
-    );
+    )
 }

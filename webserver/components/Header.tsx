@@ -1,37 +1,38 @@
-'use client';
+'use client'
 
-import Link from "next/link";
-import { Search, User as UserIcon } from "lucide-react";
-import { useState } from "react";
-import { useAuth } from "@/components/AuthProvider";
-import { useRouter } from 'next/navigation';
+import Link from 'next/link'
+import { Search, User as UserIcon } from 'lucide-react'
+import { useState } from 'react'
+import { useAuth } from '@/components/AuthProvider'
+import { useRouter } from 'next/navigation'
 
 export default function Header() {
-    const { user, openAuthModal } = useAuth();
-    const [searchQuery, setSearchQuery] = useState("");
-    const router = useRouter();
+    const { user, openAuthModal } = useAuth()
+    const [searchQuery, setSearchQuery] = useState('')
+    const router = useRouter()
 
     const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
+        e.preventDefault()
         if (searchQuery.trim()) {
-            router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+            router.push(`/search?q=${encodeURIComponent(searchQuery)}`)
         }
-    };
+    }
 
-    const currentDate = new Date().toLocaleDateString("en-US", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-    });
-
+    const currentDate = new Date().toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    })
 
     return (
         <header className="flex flex-col border-b border-gray-300 bg-white">
             <div className="container mx-auto px-4 py-4 grid grid-cols-1 md:grid-cols-3 items-center relative gap-4 md:gap-0">
-
                 <div className="flex flex-col items-start gap-3 order-2 md:order-1">
-                    <form onSubmit={handleSearch} className="flex items-center gap-2">
+                    <form
+                        onSubmit={handleSearch}
+                        className="flex items-center gap-2"
+                    >
                         <div className="relative">
                             <input
                                 type="text"
@@ -44,8 +45,12 @@ export default function Header() {
                         </div>
                     </form>
                     <div>
-                        <div className="text-xs font-bold text-gray-700">{currentDate}</div>
-                        <div className="hidden md:block text-xs text-gray-500">Today’s News</div>
+                        <div className="text-xs font-bold text-gray-700">
+                            {currentDate}
+                        </div>
+                        <div className="hidden md:block text-xs text-gray-500">
+                            Today’s News
+                        </div>
                     </div>
                 </div>
 
@@ -61,12 +66,14 @@ export default function Header() {
                 <div className="flex items-center gap-4 order-3 justify-center md:justify-end">
                     {user ? (
                         <>
-                            <Link href="/profile" className="flex items-center gap-2 text-sm font-medium text-gray-900 hover:text-gray-700">
+                            <Link
+                                href="/profile"
+                                className="flex items-center gap-2 text-sm font-medium text-gray-900 hover:text-gray-700"
+                            >
                                 <UserIcon className="w-5 h-5" />
                                 {user.name || 'Profile'}
                             </Link>
                         </>
-
                     ) : (
                         <button
                             onClick={openAuthModal}
@@ -78,5 +85,5 @@ export default function Header() {
                 </div>
             </div>
         </header>
-    );
+    )
 }

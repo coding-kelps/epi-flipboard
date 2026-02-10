@@ -1,22 +1,22 @@
-'use client';
+'use client'
 
-import { Search } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useDebouncedCallback } from 'use-debounce';
+import { Search } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useDebouncedCallback } from 'use-debounce'
 
 export default function ExploreSearch() {
-    const searchParams = useSearchParams();
-    const { replace } = useRouter();
+    const searchParams = useSearchParams()
+    const { replace } = useRouter()
 
     const handleSearch = useDebouncedCallback((term: string) => {
-        const params = new URLSearchParams(searchParams);
+        const params = new URLSearchParams(searchParams)
         if (term) {
-            params.set('q', term);
+            params.set('q', term)
         } else {
-            params.delete('q');
+            params.delete('q')
         }
-        replace(`/explore?${params.toString()}`);
-    }, 300);
+        replace(`/explore?${params.toString()}`)
+    }, 300)
 
     return (
         <div className="relative w-full max-w-2xl">
@@ -31,5 +31,5 @@ export default function ExploreSearch() {
                 defaultValue={searchParams.get('q')?.toString()}
             />
         </div>
-    );
+    )
 }

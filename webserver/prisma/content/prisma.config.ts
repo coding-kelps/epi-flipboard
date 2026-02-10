@@ -1,10 +1,9 @@
-import { defineConfig } from "prisma/config";
-import { getDatabaseUrl } from "../../lib/database-url";
-
+import { defineConfig } from 'prisma/config'
+import { getDatabaseUrl } from '../../lib/database-url'
 
 export default defineConfig({
-  schema: "schema.prisma",
-  datasource: {
-    url: getDatabaseUrl("CONTENT_DB"),
-  },
-});
+    schema: 'schema.prisma',
+    datasource: {
+        url: getDatabaseUrl('CONTENT_DB'),
+    },
+})

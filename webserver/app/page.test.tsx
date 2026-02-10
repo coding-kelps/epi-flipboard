@@ -1,54 +1,54 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import Home from './page';
-import { Article } from '@/lib/articles';
+import { render, screen } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import Home from './page'
+import { Article } from '@/lib/articles'
 
 // Mock dependencies
-const mockGetArticles = vi.fn();
-const mockGetSession = vi.fn();
-const mockGetFollowedFeeds = vi.fn();
-const mockCheckImageResolution = vi.fn();
+const mockGetArticles = vi.fn()
+const mockGetSession = vi.fn()
+const mockGetFollowedFeeds = vi.fn()
+const mockCheckImageResolution = vi.fn()
 
 vi.mock('@/lib/articles', () => ({
     getArticles: () => mockGetArticles(),
-}));
+}))
 
 vi.mock('@/lib/auth', () => ({
     getSession: () => mockGetSession(),
-}));
+}))
 
 vi.mock('@/lib/feed-activity', () => ({
     getFollowedFeedsWithMetadata: (id: number) => mockGetFollowedFeeds(id),
-}));
+}))
 
 vi.mock('@/lib/image-utils', () => ({
     checkImageResolution: (url: string) => mockCheckImageResolution(url),
-}));
+}))
 
 // Mock Components
 vi.mock('@/components/ArticleCard', () => ({
-    default: ({ article, variant }: { article: Article, variant: string }) => (
-        <div data-testid={`article-card-${variant}`}>
-            {article.title}
-        </div>
-    )
-}));
+    default: ({ article, variant }: { article: Article; variant: string }) => (
+        <div data-testid={`article-card-${variant}`}>{article.title}</div>
+    ),
+}))
 
 vi.mock('@/components/HomepageNav', () => ({
-    default: () => <div data-testid="homepage-nav" />
-}));
+    default: () => <div data-testid="homepage-nav" />,
+}))
 
 vi.mock('@/components/FeedUpdateItem', () => ({
-    default: ({ feed }: any) => <div data-testid="feed-update">{feed.name}</div>
-}));
+    default: ({ feed }: any) => (
+        <div data-testid="feed-update">{feed.name}</div>
+    ),
+}))
 
 describe('Home Page', () => {
     beforeEach(() => {
-        vi.clearAllMocks();
-        mockGetSession.mockResolvedValue(null);
-        mockGetFollowedFeeds.mockResolvedValue([]);
-        mockCheckImageResolution.mockResolvedValue(true);
-    });
+        vi.clearAllMocks()
+        mockGetSession.mockResolvedValue(null)
+        mockGetFollowedFeeds.mockResolvedValue([])
+        mockCheckImageResolution.mockResolvedValue(true)
+    })
 
     const mockArticles: Article[] = Array.from({ length: 15 }, (_, i) => ({
         article_id: BigInt(i + 1),
@@ -67,52 +67,52 @@ describe('Home Page', () => {
             name: 'Pub',
             image_url: null,
             publisher_id: BigInt(1),
-            display_name: 'Pub'
+            display_name: 'Pub',
         },
-        article_tag: []
-    }));
+        article_tag: [],
+    }))
 
     it('renders empty state when no articles', async () => {
-        mockGetArticles.mockResolvedValue([]);
+        mockGetArticles.mockResolvedValue([])
 
-        const jsx = await Home();
-        render(jsx);
+        const jsx = await Home()
+        render(jsx)
 
-        expect(screen.getByText('No articles found.')).toBeInTheDocument();
-    });
+        expect(screen.getByText('No articles found.')).toBeInTheDocument()
+    })
 
     it('renders articles and sidebar structure', async () => {
-        mockGetArticles.mockResolvedValue(mockArticles);
+        mockGetArticles.mockResolvedValue(mockArticles)
 
-        const jsx = await Home();
-        render(jsx);
+        const jsx = await Home()
+        render(jsx)
 
-        expect(mockGetArticles).toHaveBeenCalled();
+        expect(mockGetArticles).toHaveBeenCalled()
 
         // Lead story (first with high-res check, we mocked checkImageResolution=true, so first with image: Article 1 (index 0)
-        expect(screen.getByTestId('article-card-lead')).toBeInTheDocument();
-        expect(screen.getByText('Article 1')).toBeInTheDocument();
+        expect(screen.getByTestId('article-card-lead')).toBeInTheDocument()
+        expect(screen.getByText('Article 1')).toBeInTheDocument()
 
         // Top stories (next 2 with images): Article 3, Article 5
-        const standardCards = screen.getAllByTestId('article-card-standard');
-        expect(standardCards.length).toBeGreaterThan(0);
+        const standardCards = screen.getAllByTestId('article-card-standard')
+        expect(standardCards.length).toBeGreaterThan(0)
 
         // Homepage Nav
-        expect(screen.getByTestId('homepage-nav')).toBeInTheDocument();
-    });
+        expect(screen.getByTestId('homepage-nav')).toBeInTheDocument()
+    })
 
     it('renders authenticated view with followed feeds', async () => {
-        mockGetArticles.mockResolvedValue(mockArticles);
-        mockGetSession.mockResolvedValue({ user: { id: '123' } });
+        mockGetArticles.mockResolvedValue(mockArticles)
+        mockGetSession.mockResolvedValue({ user: { id: '123' } })
         mockGetFollowedFeeds.mockResolvedValue([
-            { id: 1, name: 'My Feed', newArticlesCount: 5 }
-        ]);
+            { id: 1, name: 'My Feed', newArticlesCount: 5 },
+        ])
 
-        const jsx = await Home();
-        render(jsx);
+        const jsx = await Home()
+        render(jsx)
 
-        expect(mockGetFollowedFeeds).toHaveBeenCalledWith(123);
-        expect(screen.getByText('Updates for You')).toBeInTheDocument();
-        expect(screen.getByText('My Feed')).toBeInTheDocument();
-    });
-});
+        expect(mockGetFollowedFeeds).toHaveBeenCalledWith(123)
+        expect(screen.getByText('Updates for You')).toBeInTheDocument()
+        expect(screen.getByText('My Feed')).toBeInTheDocument()
+    })
+})

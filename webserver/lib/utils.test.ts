@@ -7,7 +7,9 @@ describe('cn', () => {
     })
 
     it('should handle conditional class names', () => {
-        expect(cn('bg-red-500', true && 'text-white', false && 'hidden')).toBe('bg-red-500 text-white')
+        expect(cn('bg-red-500', true && 'text-white', false && 'hidden')).toBe(
+            'bg-red-500 text-white'
+        )
     })
 
     it('should merge tailwind classes using tailwind-merge', () => {

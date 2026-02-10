@@ -1,17 +1,32 @@
-import { describe, it, expect } from 'vitest';
-import robots from './robots';
+import { describe, it, expect } from 'vitest'
+import robots from './robots'
 
 describe('Robots', () => {
     it('returns correct robots configuration', () => {
-        const config = robots();
+        const config = robots()
         expect(config).toEqual({
             rules: [
                 {
-                    userAgent: ['Googlebot', 'Bingbot', 'DuckDuckBot', 'Qwantify', 'BraveSearchBot', 'Ecosia'],
+                    userAgent: [
+                        'Googlebot',
+                        'Bingbot',
+                        'DuckDuckBot',
+                        'Qwantify',
+                        'BraveSearchBot',
+                        'Ecosia',
+                    ],
                     allow: '/',
                 },
                 {
-                    userAgent: ['GPTBot', 'ClaudeBot', 'Google-Extended', 'FacebookBot', 'Meta-ExternalAgent', 'Amazonbot', 'CCBot'],
+                    userAgent: [
+                        'GPTBot',
+                        'ClaudeBot',
+                        'Google-Extended',
+                        'FacebookBot',
+                        'Meta-ExternalAgent',
+                        'Amazonbot',
+                        'CCBot',
+                    ],
                     allow: '/',
                 },
                 {
@@ -20,6 +35,6 @@ describe('Robots', () => {
                 },
             ],
             sitemap: 'https://epi-flipboard.kelps.io/sitemap.xml',
-        });
-    });
-});
+        })
+    })
+})
