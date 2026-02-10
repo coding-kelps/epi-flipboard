@@ -28,7 +28,7 @@ RUN mkdir -p /opt/dagster \
  && chown -R 999:999 /opt/dagster
 
 COPY --from=builder --chown=appuser:appuser /app /app
- 
+
 ENV PATH="/app/.venv/bin:$PATH"
 
 USER appuser
