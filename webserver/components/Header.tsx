@@ -57,6 +57,7 @@ export default function Header() {
                 <div className="order-1 md:order-2 text-center w-full">
                     <Link href="/" className="inline-block group w-full">
                         {/* Fluid text size to prevent cropping: starts at 10vw on mobile, caps at 6xl size approx */}
+                        {/* Bonjour David */}
                         <h1 className="font-gothic text-[11vw] md:text-6xl lg:text-7xl font-black tracking-tight text-gray-900 group-hover:opacity-90 transition-opacity whitespace-nowrap overflow-hidden text-ellipsis md:overflow-visible">
                             Epi FlipBoard
                         </h1>
